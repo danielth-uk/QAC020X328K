@@ -1,9 +1,7 @@
 from fastapi import HTTPException
 import mysql.connector
 import os, random, string, re,json, base64, jwt
-from dotenv import load_dotenv
 
-load_dotenv()
 
 
 # =======================================================================
