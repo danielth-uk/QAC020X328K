@@ -6,9 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security import SecurityScopes
 
-import ApiModels
-import functionsMain
+from app.ApiModels import *
+from app.functionsMain import *
 
+from pathlib import Path
+BASE_PATH = Path(__file__).resolve().parent
 
 app = FastAPI()
 
@@ -31,12 +33,12 @@ app.add_middleware(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  
 
 # Defines where the static web page files are located
-app.mount("/static", StaticFiles(directory="Static"), name="static")
-templates = Jinja2Templates(directory="Templates")
+app.mount("/static", StaticFiles(directory=str(BASE_PATH / "Static")), name="static")
+templates = Jinja2Templates(directory=str(BASE_PATH/"Templates"))
 
 # Checks the bearer to see if its valid, and if the user is authorized for the request
 def check_api_key(security_scopes: SecurityScopes, api_key: str = Depends(oauth2_scheme)):
-    functionsMain.checkRequestAuth(api_key, security_scopes.scopes)
+    checkRequestAuth(api_key, security_scopes.scopes)
 
 # =======================================================================
 #                          API Endpoints from here
@@ -46,8 +48,8 @@ def check_api_key(security_scopes: SecurityScopes, api_key: str = Depends(oauth2
 # For every authenticated required request, each endpoint will have an "AuthCheck" variable that is not read, 
 # but will require users to be authenticated and have the right authorization or a HTTPException will be raised
 @app.post("/api/admin/danger", tags=["Admin Methods"])
-async def admin_run_query(request: ApiModels.CustomSQL, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminRunCustomQuery(request)
+async def admin_run_query(request: CustomSQL, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
+    return adminRunCustomQuery(request)
 
 
 # =======================================================================
@@ -61,55 +63,55 @@ async def admin_run_query(request: ApiModels.CustomSQL, AuthCheck: bool = Securi
 # Returns a list of all the orgs in the database
 @app.get("/api/admin/orgs", tags=["Admin Methods"])
 def admin_get_orgs(AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminGetOrgs()
+    return adminGetOrgs()
 
 # Used to get different types of users from the DB (Admin or Client)
 @app.get("/api/admin/users/{type}", tags=["Admin Methods"])
 def admin_get_users(type: str, org: str = "", AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    if(type == "client"): return functionsMain.adminGetUserTypes(0, org)
-    elif(type == "admin"): return functionsMain.adminGetUserTypes(1, org)
+    if(type == "client"): return adminGetUserTypes(0, org)
+    elif(type == "admin"): return adminGetUserTypes(1, org)
     # if not it will raise a 404
     else: raise HTTPException(status_code=404, detail="User type not valid")
 
 @app.post("/api/admin/users/", tags=["Admin Methods"])
-def admin_create_users(userDetails: ApiModels.UserModel, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.createUser(userDetails)
+def admin_create_users(userDetails: UserModel, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
+    return createUser(userDetails)
 
 @app.put("/api/admin/users/{userId}", tags=["Admin Methods"])
-def admin_update_user(userDetails: ApiModels.UserModel, userId: str, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.updateUser(userDetails, userId)
+def admin_update_user(userDetails: UserModel, userId: str, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
+    return updateUser(userDetails, userId)
 
 @app.delete("/api/admin/users/{userId}", tags=["Admin Methods"])
 def admin_delete_user(userId: str, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.deleteUser(userId)
+    return deleteUser(userId)
 
 @app.post("/api/admin/pwdReset/{org}/{userId}", tags=["Admin Methods"])
 def admin_reset_password(org: str, userId: str, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.resetPassword(org, userId)
+    return resetPassword(org, userId)
 
 @app.get("/api/admin/tickets", tags=["Admin Methods"])
 def admin_get_tickets(AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminGetTickets()
+    return adminGetTickets()
 
 @app.get("/api/admin/getAdmins", tags=["Admin Methods"])
 def admin_get_admins(AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminGetAdmins()
+    return adminGetAdmins()
 
 @app.put("/api/admin/updateAdmin/{ticketId}", tags=["Admin Methods", "Ticket Methods"])
-async def admin_update_assigned(ticketId: int, data: ApiModels.AssignUser, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminUpdateAssigned(ticketId, data)
+async def admin_update_assigned(ticketId: int, data: AssignUser, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
+    return adminUpdateAssigned(ticketId, data)
 
 @app.put("/api/admin/closeTicket/{ticketId}", tags=["Admin Methods"])
 def admin_update_close_ticket(ticketId: int, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminCloseTicket(ticketId)
+    return adminCloseTicket(ticketId)
 
 @app.delete("/api/admin/comment/{commentId}", tags=["Admin Methods"])
 def admin_delete_comment(commentId: int, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminDeleteComment(commentId)
+    return adminDeleteComment(commentId)
 
 @app.put("/api/admin/tags/", tags=["Admin Methods"])
-def admin_update_tags(data: ApiModels.TicketTags, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
-    return functionsMain.adminUpdateTags(data.ticketId, data.tags)
+def admin_update_tags(data: TicketTags, AuthCheck: bool = Security(check_api_key, scopes=["Admin"])):
+    return adminUpdateTags(data.ticketId, data.tags)
 
 # =======================================================================
 #                             CLIENT endpoints
@@ -119,12 +121,12 @@ def admin_update_tags(data: ApiModels.TicketTags, AuthCheck: bool = Security(che
 @app.get("/api/client/tickets", tags=["Client Methods", "Ticket Methods"])
 async def get_client_tickets(request: Request, org: bool, AuthCheck: bool = Security(check_api_key, scopes=["Client"])):
     # temp
-    # return functionsMain.clientGetTickets(org, "cisco", "cisco.danielth")
-    return functionsMain.clientGetTickets(org, request.cookies["org"].lower(), request.cookies["username"].lower())
+    # return clientGetTickets(org, "cisco", "cisco.danielth")
+    return clientGetTickets(org, request.cookies["org"].lower(), request.cookies["username"].lower())
 
 @app.post("/api/client/tickets", tags=["Client Methods", "Ticket Methods"])
-def create_client_ticket(data: ApiModels.TicketModel, AuthCheck: bool = Security(check_api_key, scopes=["Client"])):
-    return functionsMain.clientCreateTicket(data.username, data.org, data.subject, data.body)
+def create_client_ticket(data: TicketModel, AuthCheck: bool = Security(check_api_key, scopes=["Client"])):
+    return clientCreateTicket(data.username, data.org, data.subject, data.body)
 
 # =======================================================================
 #                             Ticket endpoints
@@ -132,20 +134,20 @@ def create_client_ticket(data: ApiModels.TicketModel, AuthCheck: bool = Security
     
 @app.get("/api/general/tickets/{ticketId}", tags=["Admin Methods", "Client Methods","Ticket Methods"])
 def get_ticket_single_ticket(org: str, ticketId: int, AuthCheck: bool = Security(check_api_key, scopes=["Admin", "Client"])):
-    return functionsMain.ticketOpenTicket(org, ticketId)
+    return ticketOpenTicket(org, ticketId)
 
 @app.get("/api/general/tickets/{ticketId}/comments", tags=["Admin Methods", "Client Methods","Ticket Methods"])
 def get_ticket_comments(ticketId: int, AuthCheck: bool = Security(check_api_key, scopes=["Client","Admin"])):
-    return functionsMain.ticketGetTicketComments(ticketId)
+    return ticketGetTicketComments(ticketId)
 
 @app.post("/api/general/comments", tags=["Admin Methods", "Client Methods","Ticket Methods"])
-def create_ticket_comment(data: ApiModels.CommentModel,request: Request, AuthCheck: bool = Security(check_api_key, scopes=["Client","Admin"])):
-    # return functionsMain.ticketCreateTicketComment("qa","qa.admin", data)
-    return functionsMain.ticketCreateTicketComment(request.cookies["org"].lower(), request.cookies["username"].lower(), data)
+def create_ticket_comment(data: CommentModel,request: Request, AuthCheck: bool = Security(check_api_key, scopes=["Client","Admin"])):
+    # return ticketCreateTicketComment("qa","qa.admin", data)
+    return ticketCreateTicketComment(request.cookies["org"].lower(), request.cookies["username"].lower(), data)
 
 @app.put("/api/general/comments/{commentId}", tags=["Admin Methods", "Client Methods", "Ticket Methods"])
-def update_ticket_comment(data: ApiModels.UpdateComment, commentId: int, AuthCheck: bool = Security(check_api_key, scopes=["Client","Admin"])):
-    return functionsMain.ticketUpdateComment(data, commentId)
+def update_ticket_comment(data: UpdateComment, commentId: int, AuthCheck: bool = Security(check_api_key, scopes=["Client","Admin"])):
+    return ticketUpdateComment(data, commentId)
 
 
 # =======================================================================
@@ -154,18 +156,18 @@ def update_ticket_comment(data: ApiModels.UpdateComment, commentId: int, AuthChe
 
 # Used to authenticated the user, must add database checks here
 @app.post("/api/auth", tags=["General Methods"])
-async def check_auth(credentials: ApiModels.AuthModel):
-    return functionsMain.checkAuthentication(credentials.username, credentials.password)
+async def check_auth(credentials: AuthModel):
+    return checkAuthentication(credentials.username, credentials.password)
 
 @app.post("/api/register", tags=["General Methods"])
-def register_user(details: ApiModels.RegisterUser):
-    return functionsMain.registerUser(username=details.username, password=details.password, org=details.org,name=details.name, adminCode=details.adminCode)
+def register_user(details: RegisterUser):
+    return registerUser(username=details.username, password=details.password, org=details.org,name=details.name, adminCode=details.adminCode)
     
 
 # Used to send demo credentials to the login page for testing and assessment
 @app.get("/api/auth/demo", tags=["General Methods"])
 def get_demo_credentials():
-    return functionsMain.getDemoUsers()
+    return getDemoUsers()
 
 
 # =======================================================================
@@ -226,3 +228,4 @@ if __name__ == "__main__":
 # https://testdriven.io/tips/6840e037-4b8f-4354-a9af-6863fb1c69eb/
 # https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
 # https://fastapi.tiangolo.com/advanced/security/oauth2-scopes/
+# https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/
