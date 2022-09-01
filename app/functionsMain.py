@@ -3,6 +3,9 @@ import mysql.connector
 import os, random, string, re,json, base64, jwt
 
 
+databasePassword = "sgMKT^wH297a0SMa"
+databaseUsername = "linroot"
+databaseHost = "lin-7936-5215-mysql-primary-private.servers.linodedb.net"
 
 # =======================================================================
 #                             General functions
@@ -50,9 +53,9 @@ def databaseFetch(query: str) -> list:
      """
     # Will need to change credentials for env
     databaseConnection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root-pass",
+        host=databaseHost,
+        user=databaseUsername,
+        password=databasePassword,
         database="qa_db_ticketing"
     )
     cursor = databaseConnection.cursor(dictionary=True)
@@ -72,9 +75,9 @@ def databaseExecute(queryStatement: str, values: list = []) -> None:
      """
     # Will need to change credentials for env
     databaseConnection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root-pass",
+        host=databaseHost,
+        user=databaseUsername,
+        password=databasePassword,
         database="qa_db_ticketing"
     )
     cursor = databaseConnection.cursor()
