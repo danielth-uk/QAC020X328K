@@ -105,7 +105,7 @@ def getDemoUsers() -> dict:
 
 # Checks authentication using username and password
 def checkAuthentication(username: str, password: str) -> list:
-    result = databaseFetch("SELECT * FROM tbl_users WHERE userid = '%s' AND password = %s;" % (username, base64.b64encode(password.encode('ascii'))))
+    result = databaseFetch("SELECT * FROM tbl_users WHERE userid = '%s' AND password = %s;" % (username, base64.b64encode(password.encode('ascii')).decode("utf-8")))
     # return result
     if(len(result) == 0 or len(result) > 1):
         return HTTPException(status_code=403, detail="Unauthenticated")
@@ -137,7 +137,7 @@ def registerUser(username: str, password: str, org: str, name:str, adminCode: st
         return HTTPException(status_code=412, detail="Username and org combination already exists", headers={"success": False, "reason": "userid already exists"})
 
     try:
-        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [org + "." + username, org, username, base64.b64encode(password.encode('ascii')), admin, name])
+        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [org + "." + username, org, username, base64.b64encode(password.encode('ascii')).decode("utf-8"), admin, name])
         return HTTPException(status_code=201, detail="User Successfully Created", headers={"success": True, "reason": "User Created"})
     except Exception as e:
         return HTTPException(status_code=500, detail="Internal Server Error", headers={"success": False, "reason": e})
@@ -162,7 +162,7 @@ def createUser(userDetails) -> HTTPException:
     else:
         password = ''.join(random.choice(string.ascii_uppercase) for i in range(16))
         
-        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [userDetails.org + "." + userDetails.username, userDetails.org, userDetails.username, base64.b64encode(password.encode('ascii')), userDetails.admin, userDetails.name])
+        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [userDetails.org + "." + userDetails.username, userDetails.org, userDetails.username, base64.b64encode(password.encode('ascii')).decode("utf-8"), userDetails.admin, userDetails.name])
         return HTTPException(status_code=201, detail="User Successfully created", headers={"success": True, "password": password})
 
 def deleteUser(userId: str) -> None:
@@ -178,7 +178,7 @@ def updateUser(details: str, userId: str) -> None:
 
 def resetPassword(org: str, userId: str) -> str:
     password = ''.join(random.choice(string.ascii_uppercase) for i in range(16))
-    databaseExecute("UPDATE tbl_users SET password=%s WHERE userid = %s", [base64.b64encode(password.encode('ascii')), org + "." + userId])
+    databaseExecute("UPDATE tbl_users SET password=%s WHERE userid = %s", [base64.b64encode(password.encode('ascii')).decode("utf-8"), org + "." + userId])
     return HTTPException(status_code=201, detail="password reset", headers={"success": True, "password": password})
 
 def adminGetTickets():
