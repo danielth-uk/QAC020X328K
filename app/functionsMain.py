@@ -6,6 +6,7 @@ import os, random, string, re,json, base64, jwt
 databasePassword = "sgMKT^wH297a0SMa"
 databaseUsername = "linroot"
 databaseHost = "lin-7936-5215-mysql-primary-private.servers.linodedb.net"
+JWTSecret="09d28166b70f4caa5e094faa6ca2556c816cf63b88e8da9563b93f7099f6f3e7"
 
 # databasePassword = "root-pass"
 # databaseUsername = "root"
@@ -22,7 +23,7 @@ def checkRequestAuth(key, scopes):
         raise HTTPException(status_code=403,detail="Forbidden")
 
     # Decodes the JWT and checks the authorization level and its in the scope of the request
-    auth = jwt.decode(key, os.getenv('JWTSecret'), algorithms="HS256")["Authorization"]
+    auth = jwt.decode(key, JWTSecret, algorithms="HS256")["Authorization"]
     if(auth not in scopes):
         raise HTTPException(status_code=401,detail="Forbidden, Unauthorized") 
 
@@ -105,7 +106,7 @@ def getDemoUsers() -> dict:
 
 # Checks authentication using username and password
 def checkAuthentication(username: str, password: str) -> list:
-    result = databaseFetch("SELECT * FROM tbl_users WHERE userid = '%s' AND password = '%s';" % (username, base64.b64encode(password.encode('ascii')).decode("utf-8")))
+    result = databaseFetch("SELECT * FROM tbl_users WHERE userid = '%s' AND password = '%s';" % (username, password))
     # return result
     if(len(result) == 0 or len(result) > 1):
         return HTTPException(status_code=403, detail="Unauthenticated")
@@ -113,13 +114,13 @@ def checkAuthentication(username: str, password: str) -> list:
         # Checks to see if the user is an admin then will return data to the frontend
         if(result[0]["admin"]): 
             # Creates a JWT and uploads it into the database on sign in
-            adminJWT = jwt.encode({"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}, os.getenv('JWTSecret'), algorithm="HS256")
+            adminJWT = jwt.encode({"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}, JWTSecret, algorithm="HS256")
             databaseExecute("UPDATE tbl_users SET token=%s WHERE userid = %s", [adminJWT,  result[0]["org"] + "." + result[0]["username"]])
             return HTTPException(status_code=200, detail="Authenticated", headers={"jwt": adminJWT,"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]})
             
             # return {"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}
         else:
-            userJWT = jwt.encode({"Authenticated": True, "Authorization": "Client", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}, os.getenv('JWTSecret'), algorithm="HS256")
+            userJWT = jwt.encode({"Authenticated": True, "Authorization": "Client", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}, JWTSecret, algorithm="HS256")
             databaseExecute("UPDATE tbl_users SET token=%s WHERE userid = %s", [userJWT,  result[0]["org"] + "." + result[0]["username"]])
             return HTTPException(status_code=200, detail="Authenticated", headers={"jwt": userJWT,"Authenticated": True, "Authorization": "Client", "org": result[0]["org"].capitalize(), "name": result[0]["name"]})
             # return {"jwt": userJWT,"Authenticated": True, "Authorization": "Client", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}
@@ -137,7 +138,7 @@ def registerUser(username: str, password: str, org: str, name:str, adminCode: st
         return HTTPException(status_code=412, detail="Username and org combination already exists", headers={"success": False, "reason": "userid already exists"})
 
     try:
-        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [org + "." + username, org, username, base64.b64encode(password.encode('ascii')).decode("utf-8"), admin, name])
+        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [org + "." + username, org, username, password, admin, name])
         return HTTPException(status_code=201, detail="User Successfully Created", headers={"success": True, "reason": "User Created"})
     except Exception as e:
         return HTTPException(status_code=500, detail="Internal Server Error", headers={"success": False, "reason": e})
