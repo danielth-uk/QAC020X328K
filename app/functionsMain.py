@@ -105,7 +105,7 @@ def getDemoUsers() -> dict:
 
 # Checks authentication using username and password
 def checkAuthentication(username: str, password: str) -> list:
-    result = databaseFetch("SELECT * FROM tbl_users WHERE userid = '%s' AND password = %s;" % (username, base64.b64encode(password.encode('ascii')).decode("utf-8")))
+    result = databaseFetch("SELECT * FROM tbl_users WHERE userid = '%s' AND password = '%s';" % (username, base64.b64encode(password.encode('ascii')).decode("utf-8")))
     # return result
     if(len(result) == 0 or len(result) > 1):
         return HTTPException(status_code=403, detail="Unauthenticated")
