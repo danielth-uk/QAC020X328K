@@ -7,6 +7,10 @@ databasePassword = "sgMKT^wH297a0SMa"
 databaseUsername = "linroot"
 databaseHost = "lin-7936-5215-mysql-primary-private.servers.linodedb.net"
 
+# databasePassword = "root-pass"
+# databaseUsername = "root"
+# databaseHost = "localhost"
+
 # =======================================================================
 #                             General functions
 # =======================================================================

@@ -33,7 +33,7 @@ app.add_middleware(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  
 
 # Defines where the static web page files are located
-app.mount("/static", StaticFiles(directory=str(BASE_PATH / "Static")), name="static")
+app.mount("/static", StaticFiles(directory=str(BASE_PATH / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_PATH/"Templates"))
 
 # Checks the bearer to see if its valid, and if the user is authorized for the request
