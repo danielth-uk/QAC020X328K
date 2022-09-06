@@ -3,8 +3,8 @@ from fastapi import FastAPI, Request, HTTPException, Depends, Security
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.security import SecurityScopes
+from fastapi.security import OAuth2PasswordBearer, SecurityScopes
+from fastapi.responses import JSONResponse
 
 from app.ApiModels import *
 from app.functionsMain import *
@@ -39,6 +39,15 @@ templates = Jinja2Templates(directory=str(BASE_PATH/"Templates"))
 # Checks the bearer to see if its valid, and if the user is authorized for the request
 def check_api_key(security_scopes: SecurityScopes, api_key: str = Depends(oauth2_scheme)):
     checkRequestAuth(api_key, security_scopes.scopes)
+
+# Custom Error handler to return different errors
+@app.exception_handler(UnicornException)
+async def unicorn_exception_handler(request: Request, exc: UnicornException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"reason": exc.reason},
+    )
+
 
 # =======================================================================
 #                          API Endpoints from here
@@ -157,6 +166,7 @@ def update_ticket_comment(data: UpdateComment, commentId: int, AuthCheck: bool =
 # Used to authenticated the user, must add database checks here
 @app.post("/api/auth", tags=["General Methods"])
 async def check_auth(credentials: AuthModel):
+    print(credentials)
     return checkAuthentication(credentials.username, credentials.password)
 
 @app.post("/api/register", tags=["General Methods"])
@@ -192,7 +202,7 @@ async def serves_webapp(request: Request):
     - Returns 404 page, if it is not defined above, and it does not exist
 
     """
-
+    print(request.url)
     # If there is a get request to an API endpoint that does not exist it will raise a 404
     if("api" in str(request.url)):
         return templates.TemplateResponse("404.html", {"request": request})
@@ -229,3 +239,6 @@ if __name__ == "__main__":
 # https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
 # https://fastapi.tiangolo.com/advanced/security/oauth2-scopes/
 # https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/
+# https://docs.pytest.org/en/7.1.x/
+# https://fastapi.tiangolo.com/tutorial/testing/
+# https://fastapi.tiangolo.com/tutorial/handling-errors/

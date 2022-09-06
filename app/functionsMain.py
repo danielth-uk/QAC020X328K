@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 import mysql.connector
-import os, random, string, re,json, base64, jwt
+import random, string, re,json, base64, jwt
 
 
 databasePassword = "sgMKT^wH297a0SMa"
@@ -11,6 +11,11 @@ JWTSecret="09d28166b70f4caa5e094faa6ca2556c816cf63b88e8da9563b93f7099f6f3e7"
 # databasePassword = "root-pass"
 # databaseUsername = "root"
 # databaseHost = "localhost"
+
+class UnicornException(Exception):
+    def __init__(self, reason: str, status_code: int = 500):
+        self.reason = reason
+        self.status_code = status_code
 
 # =======================================================================
 #                             General functions
@@ -25,7 +30,7 @@ def checkRequestAuth(key, scopes):
     # Decodes the JWT and checks the authorization level and its in the scope of the request
     auth = jwt.decode(key, JWTSecret, algorithms="HS256")["Authorization"]
     if(auth not in scopes):
-        raise HTTPException(status_code=401,detail="Forbidden, Unauthorized") 
+        raise HTTPException(status_code=403,detail="Forbidden, Unauthorized") 
 
 
 # Cleans data so it can be stored in database (specifically newline from QuillJS)
@@ -106,10 +111,12 @@ def getDemoUsers() -> dict:
 
 # Checks authentication using username and password
 def checkAuthentication(username: str, password: str) -> list:
+    if(username == "" or password == ""): 
+        raise HTTPException(status_code=422, detail="Unprocessable Entity")
     result = databaseFetch("SELECT * FROM tbl_users WHERE userid = '%s' AND password = '%s';" % (username, password))
     # return result
     if(len(result) == 0 or len(result) > 1):
-        return HTTPException(status_code=403, detail="Unauthenticated")
+        raise HTTPException(status_code=403, detail="Unauthenticated")
     else:
         # Checks to see if the user is an admin then will return data to the frontend
         if(result[0]["admin"]): 
@@ -131,17 +138,17 @@ def registerUser(username: str, password: str, org: str, name:str, adminCode: st
         if(adminCode == "12345678"):
             admin = True
         else:
-            return HTTPException(status_code=412, detail="Incorrect Admin Code", headers={"success": False, "reason": "incorrect admin code"})
+            raise UnicornException(status_code=403, reason="incorrect admin code")
 
     exists = databaseFetch("SELECT username FROM tbl_users WHERE userid = '%s' " % (org + "." + username))
     if(len(exists) > 0):
-        return HTTPException(status_code=412, detail="Username and org combination already exists", headers={"success": False, "reason": "userid already exists"})
+        raise UnicornException(status_code=409, reason="Username and org combination already exists")
 
     try:
         databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [org + "." + username, org, username, password, admin, name])
         return HTTPException(status_code=201, detail="User Successfully Created", headers={"success": True, "reason": "User Created"})
     except Exception as e:
-        return HTTPException(status_code=500, detail="Internal Server Error", headers={"success": False, "reason": e})
+        raise HTTPException(status_code=500, detail="Internal Server Error", headers={"success": False, "reason": e})
 
 
 # =======================================================================
@@ -159,7 +166,7 @@ def adminGetOrgs() -> list:
 def createUser(userDetails) -> HTTPException:
     exists = databaseFetch("SELECT username FROM tbl_users WHERE userid = '%s' " % (userDetails.org + "." + userDetails.username))
     if(len(exists) > 0):
-        return HTTPException(status_code=412, detail="Username and org combination already exists", headers={"success": False, "reason": "userid already exists"})
+        raise HTTPException(status_code=500, detail="Username and org combination already exists", headers={"success": False, "reason": "userid already exists"})
     else:
         password = ''.join(random.choice(string.ascii_uppercase) for i in range(16))
         
@@ -172,7 +179,7 @@ def deleteUser(userId: str) -> None:
 def updateUser(details: str, userId: str) -> None:
     exists = databaseFetch("SELECT username FROM tbl_users WHERE userid = '%s' " % (details.org + "." + details.username))
     if(len(exists) > 0):
-        return HTTPException(status_code=412, detail="Username and org combination already exists", headers={"success": False, "reason": "userid already exists"})
+        raise HTTPException(status_code=500, detail="Username and org combination already exists", headers={"success": False, "reason": "userid already exists"})
     else:
         databaseExecute("UPDATE tbl_users SET userid=%s, username=%s,name=%s WHERE userid = %s", [details.org + "." + details.username, details.username, details.name, details.org + "." + userId])
         return HTTPException(status_code=201, detail="User Successfully created", headers={"success": True})
@@ -197,21 +204,21 @@ def adminDeleteComment(id):
         databaseExecute("DELETE FROM tbl_ticket_comments WHERE id = %s ", [id])
         return HTTPException(status_code=201, detail="Comment Deleted", headers={"success": True})
     except:
-        return HTTPException(status_code=500, detail="Cannot Delete Comment")
+        raise HTTPException(status_code=500, detail="Cannot Delete Comment")
 
 def adminCloseTicket(id):
     try:
         databaseExecute("UPDATE tbl_tickets SET closed=1 WHERE id = %s ", [id])
         return HTTPException(status_code=201, detail="Ticket Updated", headers={"success": True})
     except:
-        return HTTPException(status_code=500, detail="Cannot close ticket")
+        raise HTTPException(status_code=500, detail="Cannot close ticket")
 
 def adminUpdateTags(id, tags):
     try:
         databaseExecute("UPDATE tbl_tickets SET tags=%s WHERE id = %s ", [tags, id])
         return HTTPException(status_code=201, detail="tags Updated", headers={"success": True})
     except:
-        return HTTPException(status_code=500, detail="Cannot update Tags")  
+        raise HTTPException(status_code=500, detail="Cannot update Tags")  
 
 ## Reluctantly adding this feature
 def adminRunCustomQuery(query) -> HTTPException:
@@ -226,7 +233,7 @@ def adminRunCustomQuery(query) -> HTTPException:
             databaseExecute(query.query)
             return HTTPException(status_code=204, detail="No return content", headers={"status_code": 204})
     except Exception as e:
-        return HTTPException(status_code=500, detail="Internal Server Error", headers={"status_code": 500, "error": e})
+        raise HTTPException(status_code=500, detail="Internal Server Error", headers={"status_code": 500, "error": e})
         
 
 def adminResetDatabase():
@@ -245,7 +252,7 @@ def clientGetTickets(org: bool, orgName: str = "", username: str = "") -> dict:
             return databaseFetch("SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.created_by =  '%s'" % username)
             
     except:
-        return HTTPException(status_code=403, detail="Missing request cookies")
+        raise HTTPException(status_code=403, detail="Missing request cookies")
 
 def clientCreateTicket(username, org, subject, body) -> HTTPException:
     databaseExecute("INSERT INTO `tbl_tickets`(`subject`, `created_by`,`org`, `main_body`) VALUES (%s,%s,%s,%s)", [subject, username, org, json.dumps(ticketBodyNormalize(body, True))])
@@ -266,7 +273,7 @@ def ticketOpenTicket(org: str, ticketId: int) -> dict:
         data[0]["main_body"] = ticketBodyNormalize({"ops": json.loads(data[0]["main_body"])}, False)
         return data[0]
     else:
-        return HTTPException(status_code=404, detail="Ticket Not Found")
+        raise HTTPException(status_code=404, detail="Ticket Not Found")
     
 def ticketGetTicketComments(ticketId):
     data = databaseFetch("SELECT id from tbl_tickets WHERE id = '%s'" % ticketId)
@@ -276,7 +283,7 @@ def ticketGetTicketComments(ticketId):
             comment["comment_body"] = ticketBodyNormalize({"ops": json.loads(comment["comment_body"])},False)
         return data
     else:
-        return HTTPException(status_code=404, detail="Ticket Not Found")
+        raise HTTPException(status_code=404, detail="Ticket Not Found")
 
 def ticketCreateTicketComment(org, username, data):
     checkData = databaseFetch("SELECT id from tbl_tickets WHERE id = '%s'" % data.ticket)
@@ -285,9 +292,9 @@ def ticketCreateTicketComment(org, username, data):
             databaseExecute("INSERT INTO `tbl_ticket_comments`(`ticket_id`, `comment_body`, `posted_by`) VALUES (%s,%s,%s)", [data.ticket, json.dumps(ticketBodyNormalize(data.body, True)), data.username])
             return HTTPException(status_code=201, detail="Comment Created")
         else:
-            return HTTPException(status_code=403, detail="Authentication Error")
+            raise HTTPException(status_code=403, detail="Authentication Error")
     else:
-        return HTTPException(status_code=404, detail="Ticket Not Found")
+        raise HTTPException(status_code=404, detail="Ticket Not Found")
     
 def ticketUpdateComment(data, commentId):
     databaseExecute("UPDATE `tbl_ticket_comments` SET `comment_body`=%s,`updated`= 1 WHERE id=%s", [json.dumps(ticketBodyNormalize(data.body, False)), commentId])

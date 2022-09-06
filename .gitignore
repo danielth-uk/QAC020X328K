@@ -1,3 +1,11 @@
 __pycache__
 .env
 _databaseFiles
+.pytest_cache
+bin
+include
+lib
+lib64
+my_env
+share
+.vscode
