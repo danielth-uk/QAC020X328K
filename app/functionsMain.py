@@ -135,7 +135,7 @@ def checkAuthentication(username: str, password: str) -> list:
 def registerUser(username: str, password: str, org: str, name:str, adminCode: str) -> HTTPException:
     admin = False
     if(adminCode != ""):
-        if(adminCode == "12345678"):
+        if(adminCode == "123456789"):
             admin = True
         else:
             raise UnicornException(status_code=403, reason="incorrect admin code")
