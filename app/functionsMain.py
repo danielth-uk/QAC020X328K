@@ -24,7 +24,7 @@ class UnicornException(Exception):
 def checkRequestAuth(key, scopes):
     # Checks to see if there is a token in the database
     exists = databaseFetch("SELECT token FROM tbl_users WHERE token = '%s' " % (key))
-    if(len(exists) > 0):
+    if(len(exists) == 0):
         raise HTTPException(status_code=403,detail="Forbidden")
 
     # Decodes the JWT and checks the authorization level and its in the scope of the request
@@ -122,7 +122,7 @@ def checkAuthentication(username: str, password: str) -> list:
         if(result[0]["admin"]): 
             # Creates a JWT and uploads it into the database on sign in
             adminJWT = jwt.encode({"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}, JWTSecret, algorithm="HS256")
-            databaseExecute("UPDATE tbl_users SET token=%s WHERE userid = %s", [adminJWT,  result[0]["org"] + "." + result[0]["username"]])
+            databaseExecute("UPDATE tbl_users SET token=%s WHERE userid = %s", [adminJWT,  result[0]["username"]])
             return HTTPException(status_code=200, detail="Authenticated", headers={"jwt": adminJWT,"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]})
             
             # return {"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}
@@ -145,7 +145,7 @@ def registerUser(username: str, password: str, org: str, name:str, adminCode: st
         raise UnicornException(status_code=409, reason="Username and org combination already exists")
 
     try:
-        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [org + "." + username, org, username, password, admin, name])
+        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s,'')", [org.lower() + "." + username, org.lower(), username, password, admin, name])
         return HTTPException(status_code=201, detail="User Successfully Created", headers={"success": True, "reason": "User Created"})
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal Server Error", headers={"success": False, "reason": e})
@@ -170,7 +170,7 @@ def createUser(userDetails) -> HTTPException:
     else:
         password = ''.join(random.choice(string.ascii_uppercase) for i in range(16))
         
-        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s)", [userDetails.org + "." + userDetails.username, userDetails.org, userDetails.username, base64.b64encode(password.encode('ascii')).decode("utf-8"), userDetails.admin, userDetails.name])
+        databaseExecute("INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s,'')", [userDetails.org + "." + userDetails.username, userDetails.org, userDetails.username, base64.b64encode(password.encode('ascii')).decode("utf-8"), userDetails.admin, userDetails.name])
         return HTTPException(status_code=201, detail="User Successfully created", headers={"success": True, "password": password})
 
 def deleteUser(userId: str) -> None:
