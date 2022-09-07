@@ -233,7 +233,7 @@ def adminRunCustomQuery(query) -> HTTPException:
             databaseExecute(query.query)
             return HTTPException(status_code=204, detail="No return content", headers={"status_code": 204})
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal Server Error", headers={"status_code": 500, "error": e})
+        return HTTPException(status_code=500, detail="Internal Server Error", headers={"status_code": 500, "error": e})
         
 
 def adminResetDatabase():
