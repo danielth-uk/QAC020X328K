@@ -3,15 +3,46 @@
 
 *Created By Daniel Thompson*
 
-### Requirements
+### [<b>Live Link</b>](139.162.205.240/)
+
+<hr/>
+
+
+## Requirements
+
+- Python3.7
+- nginx (for deployment)
+- mySQL server
 
 <br />
 
-# Testing
+### Python Packages 
+- pyjwt
+- fastapi
+- uvicorn
+- mysql-connector-python
+
+<br />
+
+# The Application
 
 
+This application uses serving HTML, JS and CSS to enable the frontend, the frontend has been built using ReactJS to create a smoother and more accessible feel in addition to providing client-side routing. This application is a basic ticketing solutions, with two different types of users that must be authenticated to use the application. Both the client-side JavaScript and the server side python application check auth with each request to ensure unauthenticated users cannot access API endpoints or pages.
 
-UI Framework:
+Users can create, read and update their own tickets and comments, while admins can add, update, read and delete their own comments (as well as read all other comments per ticket). Admins can also close tickets and update ticket details such as assigned users and tags. Admin users also have the ability to create, delete and edit all users in the application as well as perform queries in the underlying database (not recommended to use)
+
+
+<br />
+
+# Deployment
+
+This application has been deployed to linode http://139.162.205.240/ in a basic ubuntu linode container. Using Nginx to reverse proxy incoming requests to the python application. [Tutorial Used Here](https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/)
+
+
+<br />
+
+# Other
+UI Frameworks used:
 <br />
 *https://daisyui.com/*  
 *https://tailwindcss.com/*
