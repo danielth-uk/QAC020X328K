@@ -47,3 +47,14 @@ UI Frameworks used:
 *https://daisyui.com/*  
 *https://tailwindcss.com/*
 
+<br />
+
+General References
+* https://pyjwt.readthedocs.io/en/latest/
+* https://testdriven.io/tips/6840e037-4b8f-4354-a9af-6863fb1c69eb/
+* https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
+* https://fastapi.tiangolo.com/advanced/security/oauth2-scopes/
+* https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/
+* https://docs.pytest.org/en/7.1.x/
+* https://fastapi.tiangolo.com/tutorial/testing/
+* https://fastapi.tiangolo.com/tutorial/handling-errors/
