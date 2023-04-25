@@ -3,14 +3,14 @@ import mysql.connector
 import random, string, re,json, base64, jwt
 
 
-databasePassword = "sgMKT^wH297a0SMa"
-databaseUsername = "linroot"
-databaseHost = "lin-7936-5215-mysql-primary-private.servers.linodedb.net"
+# databasePassword = "sgMKT^wH297a0SMa"
+# databaseUsername = "linroot"
+# databaseHost = "lin-7936-5215-mysql-primary-private.servers.linodedb.net"
 JWTSecret="09d28166b70f4caa5e094faa6ca2556c816cf63b88e8da9563b93f7099f6f3e7"
 
-# databasePassword = "root-pass"
-# databaseUsername = "root"
-# databaseHost = "localhost"
+databasePassword = ""
+databaseUsername = "root"
+databaseHost = "localhost"
 
 class UnicornException(Exception):
     def __init__(self, reason: str, status_code: int = 500):
@@ -122,7 +122,7 @@ def checkAuthentication(username: str, password: str) -> list:
         if(result[0]["admin"]): 
             # Creates a JWT and uploads it into the database on sign in
             adminJWT = jwt.encode({"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}, JWTSecret, algorithm="HS256")
-            databaseExecute("UPDATE tbl_users SET token=%s WHERE userid = %s", [adminJWT,  result[0]["username"]])
+            databaseExecute("UPDATE tbl_users SET token=%s WHERE userid = %s", [adminJWT,  result[0]["org"] + "." + result[0]["username"]])
             return HTTPException(status_code=200, detail="Authenticated", headers={"jwt": adminJWT,"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]})
             
             # return {"Authenticated": True, "Authorization": "Admin", "org": result[0]["org"].capitalize(), "name": result[0]["name"]}

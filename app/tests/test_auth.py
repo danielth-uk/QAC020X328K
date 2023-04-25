@@ -61,7 +61,7 @@ def test_register_existing_user():
         "name": "string",
         "admin": True,
         "password": "string",
-        "adminCode": "12345678"
+        "adminCode": "123456789"
     })
     assert response.status_code == 409
     assert response.json() == {"reason":"Username and org combination already exists"}
