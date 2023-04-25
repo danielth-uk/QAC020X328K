@@ -9,7 +9,7 @@ on:
 
 jobs:
   # Label of the container job
-  ci-testing:
+  database-setup:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -22,12 +22,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+  application-testing:
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
 
       - name: Imports data to database
-        run: mysql -u username -p database_name < ./app/tests/_test_database.sql
+        run: mysql -u root -p testing_password < ./app/tests/_test_database.sql
 
 
       - name: Install dependencies
