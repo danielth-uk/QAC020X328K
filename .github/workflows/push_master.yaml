@@ -16,6 +16,8 @@ jobs:
         image: mysql
         env:
           MYSQL_ROOT_PASSWORD: testing_password
+        volumes:
+          - "./app/tests/_test_database.sql:/docker-entrypoint-initdb.d/yourdump.sql"
         options: >-
           --health-cmd "mysqladmin ping"
           --health-interval 10s
@@ -26,8 +28,8 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Imports data to database
-        run: docker exec -i mysql mysql --user=root --password=testing_password qa_db_ticketing < ./app/tests/_test_database.sql
+      # - name: Imports data to database
+      #   run: docker exec -i mysql mysql --user=root --password=testing_password qa_db_ticketing < ./app/tests/_test_database.sql
 
 
       - name: Install dependencies
