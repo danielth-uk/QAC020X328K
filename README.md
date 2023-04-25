@@ -39,6 +39,19 @@ Users can create, read and update their own tickets and comments, while admins c
 This application has been deployed to linode http://139.162.205.240/ in a basic ubuntu linode container. Using Nginx to reverse proxy incoming requests to the python application. [Tutorial Used Here](https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/)
 
 
+# To use 
+
+## Starting
+```
+$ uvicorn app.main:app --reload
+```
+
+## Testing
+```
+$ pytest
+```
+
+
 <br />
 
 # Other
