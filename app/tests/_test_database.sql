@@ -1,5 +1,5 @@
 CREATE TABLE `tbl_users` (
-  `userid` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
+  `userid` varchar(64) NOT NULL,
   `org` varchar(32) NOT NULL,
   `username` varchar(32) NOT NULL,
   `password` varchar(256) NOT NULL,
@@ -12,8 +12,8 @@ CREATE TABLE `tbl_users` (
 CREATE TABLE `tbl_tickets` (
   `id` int NOT NULL AUTO_INCREMENT,
   `subject` varchar(16) DEFAULT NULL,
-  `created_by` varchar(64)  COLLATE utf8mb4_general_ci NOT NULL,
-  `assigned_contact` varchar(64)  COLLATE utf8mb4_general_ci NULL,
+  `created_by` varchar(64) NOT NULL,
+  `assigned_contact` varchar(64) NULL,
   `org` text NOT NULL,
   `tags` varchar(64) NULL,
   `opened_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -30,17 +30,17 @@ CREATE TABLE `tbl_ticket_comments` (
   `ticket_id` int NOT NULL,
   `comment_body` JSON,
   `posted` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `posted_by` varchar(64) NOT NULL,
+  `posted_by` varchar(64),
   `updated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
   FOREIGN KEY (ticket_id) REFERENCES tbl_tickets(id),
   FOREIGN KEY (posted_by) REFERENCES tbl_users(userid)
-) ENGINE=InnoDB COLLATE=utf8_general_ci;
+) ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
 
 
 -- Importing data
 
 INSERT INTO `tbl_users` (`userid`, `org`, `username`, `password`, `admin`, `name`) VALUES
 ('test.user', 'TESTING', 'test', 'cGFzc3dvcmQ=', 0, 'Testing User'),
-('test.admin', 'TESTING', 'admin', 'cGFzc3dvcmQ=', 1, 'Testing Admin'),
+('test.admin', 'TESTING', 'admin', 'cGFzc3dvcmQ=', 1, 'Testing Admin')
 
