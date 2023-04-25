@@ -2,3 +2,4 @@ uvicorn
 fastapi
 mysql-connector-python 
 pyjwt
+jinja2
