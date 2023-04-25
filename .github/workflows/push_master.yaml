@@ -9,7 +9,7 @@ on:
 
 jobs:
   # Label of the container job
-  database-setup:
+  ci-testing:
     runs-on: ubuntu-latest
     services:
       mysql:
