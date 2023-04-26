@@ -29,7 +29,7 @@ def test_login_main(credentials: dict = {}):
 
 def test_login_good_creds():
     response = test_login_main({
-        "username": "qa.admin",
+        "username": "test.admin",
         "password": "cGFzc3dvcmQ="
     })
     assert response.status_code == 200

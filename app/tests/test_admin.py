@@ -7,7 +7,7 @@ client = TestClient(app)
 # Used to get a new JWT on each test
 def test_get_jwt():
     response = client.post("/api/auth",json={
-        "username": "qa.admin",
+        "username": "test.admin",
         "password": "cGFzc3dvcmQ="
     })
     data = response.json()
