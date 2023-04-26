@@ -43,7 +43,7 @@ jobs:
         run: mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
 
       - name: Test Database Data
-        run: \
+        run: |
           mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing -e 'SHOW TABLES'
           mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_users'
           mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_tickets'
