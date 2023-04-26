@@ -58,6 +58,27 @@ This application has been deployed to X [To be added]. Using Nginx to reverse pr
 > flake8
 ```
 
+# To use - Docker
+
+Note you must have a `.local.env` file with the following ENV Params
+
+```
+ENV=DEV
+JWT_SECRET=
+DATABASE_DB=
+DATABASE_USER=
+DATABASE_PASSWORD=
+DATABASE_HOST=
+```
+
+``` powershell
+-- Building --
+> docker build --tag backend .
+
+-- Running --
+> docker run --env-file .local.env -p 8000:8000 backend -d
+```
+
 <br />
 
 # Other
