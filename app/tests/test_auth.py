@@ -59,7 +59,7 @@ def test_register_existing_user():
         "username": "admin",
         "org": "qa",
         "name": "string",
-        "admin": True,
+        "admin": "true",
         "password": "string",
         "adminCode": "123456789"
     })
@@ -71,7 +71,7 @@ def test_register_bad_admin_code():
         "username": "string",
         "org": "string",
         "name": "string",
-        "admin": True,
+        "admin": "true",
         "password": "string",
         "adminCode": "string"
     })
