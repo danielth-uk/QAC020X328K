@@ -57,7 +57,7 @@ def test_register_main(details: dict = {}):
 def test_register_existing_user():
     response = test_register_main({
         "username": "admin",
-        "org": "qa",
+        "org": "test",
         "name": "string",
         "admin": "true",
         "password": "string",
