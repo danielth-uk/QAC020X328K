@@ -3,7 +3,7 @@
 
 *Created By Daniel Thompson*
 
-### [<b>Live Link</b>](http://139.162.205.240/)
+[![Push Master](https://github.com/danielth-uk/QAC020X328K/actions/workflows/push_master.yaml/badge.svg?branch=master)](https://github.com/danielth-uk/QAC020X328K/actions/workflows/push_master.yaml)
 
 <hr/>
 
@@ -36,7 +36,7 @@ Users can create, read and update their own tickets and comments, while admins c
 
 # Deployment
 
-This application has been deployed to linode http://139.162.205.240/ in a basic ubuntu linode container. Using Nginx to reverse proxy incoming requests to the python application. [Tutorial Used Here](https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/)
+This application has been deployed to X [To be added]. Using Nginx to reverse proxy incoming requests to the python application. [Tutorial Used Here](https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/)
 
 
 # To use 
@@ -53,6 +53,10 @@ This application has been deployed to linode http://139.162.205.240/ in a basic 
 > pytest
 ```
 
+## Linting
+```
+> flake8
+```
 
 <br />
 
