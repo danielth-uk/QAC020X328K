@@ -76,7 +76,7 @@ DATABASE_HOST=
 > docker build --tag backend .
 
 -- Running --
-> docker run --env-file .local.env -p 8000:8000 backend -d
+> docker run --env-file .local.env -p 8000:8000 -d backend
 ```
 
 <br />
