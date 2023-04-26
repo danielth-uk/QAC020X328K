@@ -42,6 +42,10 @@ jobs:
       - name: Imports data to database
         run: mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
 
+      - name: Test Database Data
+        run: |
+          mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing
+          SELECT * FROM tbl_users
 
       - name: Install dependencies
         run: |
