@@ -41,6 +41,6 @@ CREATE TABLE `tbl_ticket_comments` (
 -- Importing data
 
 INSERT INTO `tbl_users` (`userid`, `org`, `username`, `password`, `admin`, `name`) VALUES
-('test.user', 'TESTING', 'test', 'cGFzc3dvcmQ=', 0, 'Testing User'),
-('test.admin', 'TESTING', 'admin', 'cGFzc3dvcmQ=', 1, 'Testing Admin')
+('test.user', 'test', 'user', 'cGFzc3dvcmQ=', 0, 'Testing User'),
+('test.admin', 'test', 'admin', 'cGFzc3dvcmQ=', 1, 'Testing Admin')
 
