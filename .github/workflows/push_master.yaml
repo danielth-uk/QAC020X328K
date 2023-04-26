@@ -109,6 +109,10 @@ jobs:
           JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
         run: docker run -p 8000:8000 -d backend
 
+      - name: Wait for app to load
+        run: sleep 5s
+        shell: bash
+
       - name: OWASP Checks
         uses: apisec-inc/ethicalcheck-action@005fac321dd843682b1af6b72f30caaf9952c641
         with:
