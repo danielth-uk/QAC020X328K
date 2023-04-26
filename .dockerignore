@@ -1,8 +1,8 @@
 __pycache__
-.env
-.ci.local.env
 _databaseFiles
 .pytest_cache
+.env
+.ci.local.env
 bin
 include
 lib
@@ -10,3 +10,5 @@ lib64
 my_env
 share
 .vscode
+app/tests
+nginx

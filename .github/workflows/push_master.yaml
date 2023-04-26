@@ -70,7 +70,6 @@ jobs:
 
   Security:
     runs-on: ubuntu-latest
-    needs: CI
     permissions:
       security-events: write
       actions: read
@@ -97,19 +96,23 @@ jobs:
       - name: Imports data to database
         run: mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f testing-requirements.txt ]; then pip install -r testing-requirements.txt; fi
+      - name: Builds App
+        run: docker build --tag backend .
 
-      - name: Launches API
-        run: uvicorn app.main:app --port 8000
+      - name: Launches App
+        env:
+          ENV: CI
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_PASSWORD: testing_password
+          DATABASE_DB: qa_db_ticketing
+          DATABASE_USER: root
+          JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
+        run: docker run -p 8000:8000 backend -d
 
       - name: OWASP Checks
         uses: apisec-inc/ethicalcheck-action@005fac321dd843682b1af6b72f30caaf9952c641
         with:
-          oas-url: "http://127.0.0.1:8000/openapu.json"
+          oas-url: "http://127.0.0.1:8000/openapi.json"
           sarif-result-file: "ethicalcheck-results.sarif"
 
       - name: Upload sarif file to repository
