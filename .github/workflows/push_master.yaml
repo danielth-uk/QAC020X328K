@@ -107,7 +107,7 @@ jobs:
           DATABASE_DB: qa_db_ticketing
           DATABASE_USER: root
           JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
-        run: docker run -p 8000:8000 backend -d
+        run: docker run -p 8000:8000 -d backend
 
       - name: OWASP Checks
         uses: apisec-inc/ethicalcheck-action@005fac321dd843682b1af6b72f30caaf9952c641
