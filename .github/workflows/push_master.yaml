@@ -16,20 +16,8 @@ on:
       - master
 
 jobs:
-  # Label of the container job
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/setup-python@v3
-      - name: Lint
-        run: |
-          pip install flake8
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-
-  test:
+  CI:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -65,3 +53,9 @@ jobs:
         run: |
           pip install pytest
           pytest
+
+      - name: Lint
+        run: |
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
