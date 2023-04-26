@@ -42,13 +42,15 @@ This application has been deployed to linode http://139.162.205.240/ in a basic 
 # To use 
 
 ## Starting
-```
-$ uvicorn app.main:app --reload
+
+### Powershell
+``` powershell
+> $env:ENV="DEV"; uvicorn app.main:app --reload
 ```
 
 ## Testing
 ```
-$ pytest
+> pytest
 ```
 
 

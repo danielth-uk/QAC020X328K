@@ -1,4 +1,4 @@
-import uvicorn
+import uvicorn, os
 from fastapi import FastAPI, Request, HTTPException, Depends, Security
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -166,7 +166,6 @@ def update_ticket_comment(data: UpdateComment, commentId: int, AuthCheck: bool =
 # Used to authenticated the user, must add database checks here
 @app.post("/api/auth", tags=["General Methods"])
 async def check_auth(credentials: AuthModel):
-    print(credentials)
     return checkAuthentication(credentials.username, credentials.password)
 
 @app.post("/api/register", tags=["General Methods"])
@@ -202,7 +201,6 @@ async def serves_webapp(request: Request):
     - Returns 404 page, if it is not defined above, and it does not exist
 
     """
-    print(request.url)
     # If there is a get request to an API endpoint that does not exist it will raise a 404
     if("api" in str(request.url)):
         return templates.TemplateResponse("404.html", {"request": request})
@@ -228,7 +226,7 @@ async def serves_webapp(request: Request):
 
 # Starts the API
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001) ## Using Port 8001 because its not used by anything else
+    uvicorn.run(app, host="0.0.0.0")
 
 
 

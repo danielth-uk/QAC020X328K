@@ -1,16 +1,26 @@
 from fastapi import HTTPException
 import mysql.connector
-import random, string, re,json, base64, jwt
+import random, string, re,json, base64, jwt, os
+from dotenv import load_dotenv
 
-
+## TO Delete
 # databasePassword = "sgMKT^wH297a0SMa"
 # databaseUsername = "linroot"
 # databaseHost = "lin-7936-5215-mysql-primary-private.servers.linodedb.net"
-JWTSecret="09d28166b70f4caa5e094faa6ca2556c816cf63b88e8da9563b93f7099f6f3e7"
+# JWTSecret="09d28166b70f4caa5e094faa6ca2556c816cf63b88e8da9563b93f7099f6f3e7"
+# databasePassword = ""
+# databaseUsername = "root"
+# databaseHost = "localhost"
 
-databasePassword = ""
-databaseUsername = "root"
-databaseHost = "localhost"
+
+if(os.environ["ENV"] == "DEV"):
+    load_dotenv()
+
+JWTSecret=os.environ["JWT_SECRET"]
+databasePassword = os.environ["DATABASE_PASSWORD"]
+databaseUsername = os.environ["DATABASE_USER"]
+databaseHost = os.environ["DATABASE_HOST"]
+databaseDb = os.environ["DATABASE_DB"]
 
 class UnicornException(Exception):
     def __init__(self, reason: str, status_code: int = 500):
@@ -66,7 +76,7 @@ def databaseFetch(query: str) -> list:
         host=databaseHost,
         user=databaseUsername,
         password=databasePassword,
-        database="qa_db_ticketing"
+        database=databaseDb
     )
     cursor = databaseConnection.cursor(dictionary=True)
     cursor.execute(query)
@@ -88,7 +98,7 @@ def databaseExecute(queryStatement: str, values: list = []) -> None:
         host=databaseHost,
         user=databaseUsername,
         password=databasePassword,
-        database="qa_db_ticketing"
+        database=databaseDb
     )
     cursor = databaseConnection.cursor()
     if(values == []):
