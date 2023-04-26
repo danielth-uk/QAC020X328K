@@ -35,9 +35,10 @@ jobs:
           --health-retries 5
 
     steps:
+      - uses: actions/checkout@v3
       - name: Check out repository code
-        uses: actions/checkout@v3
-
+        uses: actions/setup-python@v3
+        
       - name: Imports data to database
         run: mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
 
@@ -53,6 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: setUp
     steps:
+      - uses: actions/setup-python@v3
       - name: Lint
         run: |
           # stop the build if there are Python syntax errors or undefined names
