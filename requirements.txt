@@ -3,4 +3,3 @@ fastapi
 mysql-connector-python 
 pyjwt
 jinja2
-dotenv

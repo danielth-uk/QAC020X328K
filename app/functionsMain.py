@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 import mysql.connector
 import random, string, re,json, base64, jwt, os
-from dotenv import load_dotenv
 
 ## TO Delete
 # databasePassword = "sgMKT^wH297a0SMa"
@@ -14,6 +13,7 @@ from dotenv import load_dotenv
 
 
 if(os.environ["ENV"] == "DEV"):
+    from dotenv import load_dotenv
     load_dotenv()
 
 JWTSecret=os.environ["JWT_SECRET"]
