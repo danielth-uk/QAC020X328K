@@ -4,7 +4,7 @@ name: Push Master
 
 env:
   ENV: CI
-  DATABASE_HOST: mysql
+  DATABASE_HOST: 127.0.0.1
   DATABASE_PASSWORD: testing_password
   DATABASE_DB: qa_db_ticketing
   DATABASE_USER: root
