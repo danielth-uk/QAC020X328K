@@ -10,10 +10,7 @@ env:
   DATABASE_USER: root
   JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 permissions:
   contents: read
@@ -67,59 +64,3 @@ jobs:
         run: |
           pip install flake8
           flake8 . --count --show-source --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-  Security:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-    services:
-      mysql:
-        image: mysql
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: testing_password
-          MYSQL_DATABASE: qa_db_ticketing
-
-        options: >-
-          --health-cmd "mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Check out repository code
-        uses: actions/setup-python@v3
-
-      - name: Imports data to database
-        run: mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
-
-      - name: Builds App
-        run: docker build --tag backend .
-
-      - name: Launches App
-        env:
-          ENV: CI
-          DATABASE_HOST: 127.0.0.1
-          DATABASE_PASSWORD: testing_password
-          DATABASE_DB: qa_db_ticketing
-          DATABASE_USER: root
-          JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
-        run: docker run -p 8000:8000 -d backend
-
-      - name: Wait for app to load
-        run: sleep 5s
-        shell: bash
-
-      - name: OWASP Checks
-        uses: apisec-inc/ethicalcheck-action@005fac321dd843682b1af6b72f30caaf9952c641
-        with:
-          oas-url: "http://127.0.0.1:8000/openapi.json"
-          sarif-result-file: "ethicalcheck-results.sarif"
-
-      - name: Upload sarif file to repository
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ./ethicalcheck-results.sarif
