@@ -113,4 +113,4 @@ jobs:
       - name: Run Dastardly Action Step
         uses: PortSwigger/dastardly-github-action@main
         with:
-          target-url: 'http://localhost:8000'
+          target-url: 'https://ginandjuice.shop'
