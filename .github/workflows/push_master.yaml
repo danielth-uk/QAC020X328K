@@ -1,6 +1,6 @@
 
 
-name: Push Master
+name: Push
 
 env:
   ENV: CI
@@ -10,10 +10,7 @@ env:
   DATABASE_USER: root
   JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 permissions:
   contents: read
@@ -112,14 +109,8 @@ jobs:
       - name: Wait for app to load
         run: sleep 5s
         shell: bash
-
-      - name: OWASP Checks
-        uses: apisec-inc/ethicalcheck-action@005fac321dd843682b1af6b72f30caaf9952c641
+        
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.4.0
         with:
-          oas-url: "http://127.0.0.1:8000/openapi.json"
-          sarif-result-file: "ethicalcheck-results.sarif"
-
-      - name: Upload sarif file to repository
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ./ethicalcheck-results.sarif
+          target: 'http://127.0.0.1:8000'
