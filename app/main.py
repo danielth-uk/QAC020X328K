@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends, Security
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from fastapi.responses import JSONResponse
 
@@ -18,15 +19,21 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "http://localhost:8084",
+    "http://localhost:8080",
+    "http://localhost:8090",
 ]
 
 # Allows requests from multiple origins and all methods
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1"] 
 )
 
 # Setting the auth schema for requests
