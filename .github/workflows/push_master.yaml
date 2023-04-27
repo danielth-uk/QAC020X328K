@@ -10,10 +10,7 @@ env:
   DATABASE_USER: root
   JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 permissions:
   contents: read
