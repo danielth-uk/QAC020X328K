@@ -96,3 +96,17 @@ def test_register_bad_admin_code():
 def test_register_no_creds():
     response = test_register_main({})
     assert response.status_code == 422
+
+
+def test_register_user_good_creds():
+    response = test_register_main(
+        {
+            "username": "admin",
+            "org": "newtest",
+            "name": "string",
+            "admin": "false",
+            "password": "ZEJNbCV4diNVfXskLEJQMQ==",
+            "adminCode": "",
+        }
+    )
+    assert response.status_code == 200
