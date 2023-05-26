@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends, Security
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer, SecurityScopes, APIKeyHeader
+from fastapi.security import SecurityScopes, APIKeyHeader
 from fastapi.responses import JSONResponse
 
 from app.ApiModels import *
