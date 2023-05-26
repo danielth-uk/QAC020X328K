@@ -219,7 +219,7 @@ def registerUser(
         raise UnicornException(
             status_code=409, reason="Username and org combination already exists"
         )
-    
+
     if checkPasswordRequirements(password):
         raise UnicornException(
             status_code=406, reason="Password does not meet minium requirements"
@@ -252,6 +252,8 @@ def registerUser(
 
 
 def getUserDetailsFromJwt(token):
+    if (token is None):
+        return ''
     return jwt.decode(token, JWTSecret, algorithms="HS256")
 
 
