@@ -17,6 +17,7 @@ app = FastAPI()
 # Enabling CORS to allow frontend to send requests to the backend
 origins = [
     "http://localhost:3000",
+    "http://localhost:8000",
     "http://localhost:8081",
 ]
 
