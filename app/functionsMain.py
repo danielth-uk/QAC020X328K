@@ -264,8 +264,8 @@ def passwordToHashedPassword(password):
 
 def checkPasswordRequirements(password):
     clearPassword = base64.b64decode(password)
-    pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$")
-    if (pattern.match(clearPassword)):
+    pattern = re.compile("^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{10,}$")
+    if (pattern.match(str(clearPassword))):
         return False
     return True
 
