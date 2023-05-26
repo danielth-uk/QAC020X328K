@@ -5,12 +5,12 @@ description = "QA Software engineer and Agile"
 authors = ["Daniel Thompson"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-uvicorn = "~0.18.3"
-fastapi = "~0.81.0"
-python-multipart = "~0.0.5"
-pydantic = {extras = ["email"], version = "~1.8.1"}
-Jinja2 = "^3.1.2"
-gunicorn = "^20.1.0"
-pyjwt = "^2.4.0"
-mysql-connector-python = "^8.0.30"
+python = "^3.10.4"
+uvicorn = "0.22.0"
+fastapi = "0.95.2"
+python-multipart = "0.0.6"
+pydantic = {extras = ["email"], version = "1.10.8"}
+Jinja2 = "3.1.2"
+gunicorn = "20.1.0"
+pyjwt = "2.7.0"
+mysql-connector-python = "8.0.33"
