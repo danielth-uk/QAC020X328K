@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends, Security
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer, SecurityScopes
+from fastapi.security import OAuth2PasswordBearer, SecurityScopes, APIKeyHeader
 from fastapi.responses import JSONResponse
 
 from app.ApiModels import *
@@ -17,7 +17,7 @@ app = FastAPI()
 # Enabling CORS to allow frontend to send requests to the backend
 origins = [
     "http://localhost:3000",
-    "http://localhost:8084",
+    "http://localhost:8081",
 ]
 
 # Allows requests from multiple origins and all methods
@@ -30,7 +30,7 @@ app.add_middleware(
 )
 
 # Setting the auth schema for requests
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = APIKeyHeader(name='Authorization', auto_error=True)
 
 # Defines where the static web page files are located
 app.mount("/static", StaticFiles(directory=str(BASE_PATH / "static")), name="static")
@@ -146,7 +146,8 @@ def admin_update_tags(data: TicketTags, AuthCheck: bool = Security(check_api_key
 
 @app.get("/api/client/tickets", tags=["Client Methods", "Ticket Methods"])
 async def get_client_tickets(request: Request, org: bool, AuthCheck: bool = Security(check_api_key, scopes=["Client"])):
-    return clientGetTickets(org, request.cookies["org"].lower(), request.cookies["username"].lower())
+    userDetails = getUserDetailsFromJwt(request.headers.get('authorization'))
+    return clientGetTickets(org, userDetails["org"].lower(), userDetails["userid"].lower())
 
 
 @app.post("/api/client/tickets", tags=["Client Methods", "Ticket Methods"])
@@ -170,8 +171,8 @@ def get_ticket_comments(ticketId: int, AuthCheck: bool = Security(check_api_key,
 
 @app.post("/api/general/comments", tags=["Admin Methods", "Client Methods", "Ticket Methods"])
 def create_ticket_comment(data: CommentModel, request: Request, AuthCheck: bool = Security(check_api_key, scopes=["Client", "Admin"])):
-    # return ticketCreateTicketComment("qa","qa.admin", data)
-    return ticketCreateTicketComment(request.cookies["org"].lower(), request.cookies["username"].lower(), data)
+    userDetails = getUserDetailsFromJwt(request.headers.get('authorization'))
+    return ticketCreateTicketComment(userDetails["org"].lower(), userDetails["userid"].lower(), data)
 
 
 @app.put("/api/general/comments/{commentId}", tags=["Admin Methods", "Client Methods", "Ticket Methods"])
@@ -222,6 +223,8 @@ async def serves_webapp(request: Request):
     - Returns 404 page, if it is not defined above, and it does not exist
 
     """
+    userDetails = getUserDetailsFromJwt(request.headers.get('authorization'))
+
     # If there is a get request to an API endpoint that does not exist it will raise a 404
     if ("api" in str(request.url)):
         return templates.TemplateResponse("404.html", {"request": request})
@@ -230,11 +233,9 @@ async def serves_webapp(request: Request):
     if (str(request.url.path) == "/"):
         return templates.TemplateResponse("index.html", {"request": request})
 
-    # Checks to see if there is a cookie called "Authorized"
-    if ("Authorized" in request.cookies):
-        # if the cookie exists and the requested url matches the contents of the cookie (either "admin" or "client")
-        # it will return the page and not have to rely on client side page authorization otherwise will return 404
-        if (request.cookies['Authorized'].lower() in str(request.url).lower()):
+    # Checks to see if they are authorized
+    if ("Authenticated" in userDetails):
+        if (userDetails["Authorization"] in str(request.url).lower()):
             return templates.TemplateResponse("index.html", {"request": request})
         else:
             return templates.TemplateResponse("404.html", {"request": request})

@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 import mysql.connector
-import random, string, re, json, base64, jwt, os
+import random, string, re, json, base64, jwt, os, hashlib
 
 
 if os.environ["ENV"] == "DEV":
@@ -120,11 +120,11 @@ def getDemoUsers() -> dict:
     return {
         "admin": {
             "username": chosenAdmin["userid"],
-            "password": chosenAdmin["password"],
+            "password": chosenAdmin["clear_password"],
         },
         "client": {
             "username": chosenClient["userid"],
-            "password": chosenClient["password"],
+            "password": chosenClient["clear_password"],
         },
     }
 
@@ -135,7 +135,7 @@ def checkAuthentication(username: str, password: str) -> list:
         raise HTTPException(status_code=422, detail="Unprocessable Entity")
     result = databaseFetch(
         "SELECT * FROM tbl_users WHERE userid = '%s' AND password = '%s';"
-        % (username, password)
+        % (username, passwordToHashedPassword(password))
     )
     # return result
     if len(result) == 0 or len(result) > 1:
@@ -150,6 +150,7 @@ def checkAuthentication(username: str, password: str) -> list:
                     "Authorization": "Admin",
                     "org": result[0]["org"].capitalize(),
                     "name": result[0]["name"],
+                    "userid": result[0]["userid"],
                 },
                 JWTSecret,
                 algorithm="HS256",
@@ -167,6 +168,7 @@ def checkAuthentication(username: str, password: str) -> list:
                     "Authorization": "Admin",
                     "org": result[0]["org"].capitalize(),
                     "name": result[0]["name"],
+                    "userid": result[0]["userid"],
                 },
             )
 
@@ -177,6 +179,7 @@ def checkAuthentication(username: str, password: str) -> list:
                     "Authorization": "Client",
                     "org": result[0]["org"].capitalize(),
                     "name": result[0]["name"],
+                    "userid": result[0]["userid"],
                 },
                 JWTSecret,
                 algorithm="HS256",
@@ -194,6 +197,7 @@ def checkAuthentication(username: str, password: str) -> list:
                     "Authorization": "Client",
                     "org": result[0]["org"].capitalize(),
                     "name": result[0]["name"],
+                    "userid": result[0]["userid"],
                 },
             )
 
@@ -218,12 +222,13 @@ def registerUser(
 
     try:
         databaseExecute(
-            "INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s,'')",
+            "INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s,%s,'')",
             [
                 org.lower() + "." + username,
                 org.lower(),
                 username,
-                password,
+                passwordToHashedPassword(password),
+                password,                   # This password would obviously not be avaiable in production, its for demo purposes only and stored in base64
                 admin,
                 name,
             ],
@@ -239,6 +244,17 @@ def registerUser(
             detail="Internal Server Error",
             headers={"success": False, "reason": e},
         )
+
+
+def getUserDetailsFromJwt(token):
+    return jwt.decode(token, JWTSecret, algorithms="HS256")
+
+
+# From colinta/SublimeStringEncode/string_encode.py
+def passwordToHashedPassword(password):
+    hasher = hashlib.sha256()
+    hasher.update(bytes(password, 'utf-8'))
+    return hasher.hexdigest()
 
 
 # =======================================================================
