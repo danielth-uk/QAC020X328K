@@ -22,7 +22,7 @@ def test_get_jwt():
 # General Variables used throughout
 varHeaders = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer %s" % test_get_jwt(),
+    "Authorization": test_get_jwt(),
 }
 
 
@@ -45,5 +45,5 @@ def test_admin_danger_no_auth():
     response = client.post(
         "/api/admin/danger", json={"query": "SELECT * FROM tbl_users"}
     )
-    assert response.status_code == 401
+    assert response.status_code == 403
     assert response.json() == {"detail": "Not authenticated"}
