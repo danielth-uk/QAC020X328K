@@ -11,8 +11,6 @@ def test_get_jwt():
         "/api/auth", json={"username": "test.user", "password": "cGFzc3dvcmQ="}
     )
     data = response.json()
-    print("asd-asd-asd-asd-asd-asd")
-    print(data)
     assert response.status_code == 200
     assert data
     return data["headers"]["jwt"]
@@ -21,7 +19,7 @@ def test_get_jwt():
 # General Variables used throughout
 varHeaders = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer %s" % test_get_jwt(),
+    "Authorization": test_get_jwt(),
 }
 
 # Sets up cookies

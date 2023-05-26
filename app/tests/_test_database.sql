@@ -3,6 +3,7 @@ CREATE TABLE `tbl_users` (
   `org` varchar(32) NOT NULL,
   `username` varchar(32) NOT NULL,
   `password` varchar(256) NOT NULL,
+  `clear_password` varchar(256) NOT NULL,
   `admin` tinyint(1) NOT NULL,
   `name` varchar(64) NOT NULL,
   `token` varchar(256) NULL,
@@ -40,7 +41,7 @@ CREATE TABLE `tbl_ticket_comments` (
 
 -- Importing data
 
-INSERT INTO `tbl_users` (`userid`, `org`, `username`, `password`, `admin`, `name`) VALUES
-('test.user', 'test', 'user', 'cGFzc3dvcmQ=', 0, 'Testing User'),
-('test.admin', 'test', 'admin', 'cGFzc3dvcmQ=', 1, 'Testing Admin')
+INSERT INTO `tbl_users` (`userid`, `org`, `username`, `password`,`clear_password`, `admin`, `name`) VALUES
+('test.user', 'test', 'user','99ea56ced47c21431d0c56ef904f282ae4256adb612c4e890b6daa1b61d0c32c', 'cGFzc3dvcmQ=', 0, 'Testing User'),
+('test.admin', 'test', 'admin','99ea56ced47c21431d0c56ef904f282ae4256adb612c4e890b6daa1b61d0c32c', 'cGFzc3dvcmQ=', 1, 'Testing Admin')
 
