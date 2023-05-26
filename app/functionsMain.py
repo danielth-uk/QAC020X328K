@@ -219,6 +219,11 @@ def registerUser(
         raise UnicornException(
             status_code=409, reason="Username and org combination already exists"
         )
+    
+    if checkPasswordRequirements(password):
+        raise UnicornException(
+            status_code=406, reason="Password does not meet minium requirements"
+        )
 
     try:
         databaseExecute(
@@ -255,6 +260,14 @@ def passwordToHashedPassword(password):
     hasher = hashlib.sha256()
     hasher.update(bytes(password, 'utf-8'))
     return hasher.hexdigest()
+
+
+def checkPasswordRequirements(password):
+    clearPassword = base64.b64decode(password)
+    pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$")
+    if (pattern.match(clearPassword)):
+        return False
+    return True
 
 
 # =======================================================================
@@ -294,11 +307,12 @@ def createUser(userDetails) -> HTTPException:
         password = "".join(random.choice(string.ascii_uppercase) for i in range(16))
 
         databaseExecute(
-            "INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s,'')",
+            "INSERT INTO `tbl_users` VALUES (%s,%s,%s,%s,%s,%s,%s,'')",
             [
                 userDetails.org + "." + userDetails.username,
                 userDetails.org,
                 userDetails.username,
+                passwordToHashedPassword(password),
                 base64.b64encode(password.encode("ascii")).decode("utf-8"),
                 userDetails.admin,
                 userDetails.name,
@@ -346,8 +360,9 @@ def updateUser(details: str, userId: str) -> None:
 def resetPassword(org: str, userId: str) -> str:
     password = "".join(random.choice(string.ascii_uppercase) for i in range(16))
     databaseExecute(
-        "UPDATE tbl_users SET password=%s WHERE userid = %s",
+        "UPDATE tbl_users SET password=%s, clear_password=%s WHERE userid = %s",
         [
+            passwordToHashedPassword(password),
             base64.b64encode(password.encode("ascii")).decode("utf-8"),
             org + "." + userId,
         ],
