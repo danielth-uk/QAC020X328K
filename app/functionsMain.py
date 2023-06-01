@@ -100,15 +100,16 @@ def databaseExecute(queryStatement: str, values: list = []) -> None:
         database=databaseDb,
     )
     cursor = databaseConnection.cursor()
-    for item in values:
-        if(";" in item or "' \\" in item):
-            raise HTTPException(status_code=422, detail="Unprocessable ")
 
-    if values == []:
-        cursor.execute(queryStatement)
-    else:
-        cursor.execute(queryStatement, values)
-    databaseConnection.commit()
+    try:
+        if values == []:
+            cursor.execute(queryStatement)
+        else:
+            cursor.execute(queryStatement, values)
+            databaseConnection.commit()
+    except:
+        raise HTTPException(status_code=500, detail="Error with sql query")
+
     cursor.close()
 
 
