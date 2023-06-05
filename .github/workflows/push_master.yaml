@@ -60,7 +60,7 @@ jobs:
           ls -la
 
       - name: Test
-        working-directory: ${{ github.workspace }}/app
+        working-directory: ../app
         run: |
           pip install pytest
           $PYTHONPATH=$PWD; python -m pytest
