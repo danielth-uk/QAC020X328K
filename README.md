@@ -60,12 +60,11 @@ To install dependencies run the following command in the root directory (where r
 
 This must be run in the `app` directory
 ``` powershell
-> $PYTHONPATH=$PWD; $env:ENV="DEV"; uvicorn main:app  
+> $PYTHONPATH=$PWD; $env:ENV="DEV"; uvicorn main:app --port 443
 ```
 
 ## Testing
 
-This must be run in the `app` directory
 ``` powershell
 > $PYTHONPATH=$PWD; python -m pytest
 ```
@@ -97,7 +96,7 @@ DATABASE_HOST=
 > docker build --tag backend .
 
 -- Running --
-> docker run --env-file .local.env -p 8000:8000 -d backend
+> docker run --env-file .local.env -p 443:443 -d backend
 ```
 
 <br />
