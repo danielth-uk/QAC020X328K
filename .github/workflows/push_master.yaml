@@ -64,7 +64,7 @@ jobs:
 
       - name: Test
         run: |
-          run pwd
+          pwd
           ls -la
           pip install pytest
           cd /home/runner/work/QAC020X328K/QAC020X328K/app
