@@ -57,6 +57,7 @@ jobs:
     
       - name: List
         run: |
+          pwd
           ls -la
 
       - name: Test
