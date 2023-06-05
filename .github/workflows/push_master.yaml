@@ -65,7 +65,7 @@ jobs:
       - name: Test
         run: |
           pip install pytest
-          $PYTHONPATH=/home/runner/work/QAC020X328K/QAC020X328K/app; python -m pytest
+          python -m pytest
 
       - name: Lint
         run: |
