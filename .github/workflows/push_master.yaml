@@ -60,9 +60,9 @@ jobs:
           ls -la
 
       - name: Test
-        working-directory: ./app
         run: |
           pip install pytest
+          cd ./app
           $PYTHONPATH=$PWD; python -m pytest
 
       - name: Lint
