@@ -1,4 +1,5 @@
 import uvicorn
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi import FastAPI, Request, HTTPException, Depends, Security
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -6,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import SecurityScopes, APIKeyHeader
 from fastapi.responses import JSONResponse
 
-from app.ApiModels import *
-from app.functionsMain import *
+from modules.ApiModels import *
+from modules.functionsMain import *
 
 from pathlib import Path
 BASE_PATH = Path(__file__).resolve().parent
@@ -16,9 +17,7 @@ app = FastAPI()
 
 # Enabling CORS to allow frontend to send requests to the backend
 origins = [
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://localhost:8081",
+    "https://localhost",
 ]
 
 # Allows requests from multiple origins and all methods
@@ -29,6 +28,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Forwards http requests to https (doesnt work in docker compose and Im not sure why)
+app.add_middleware(HTTPSRedirectMiddleware)
 
 # Setting the auth schema for requests
 oauth2_scheme = APIKeyHeader(name='Authorization', auto_error=True)
@@ -248,7 +250,13 @@ async def serves_webapp(request: Request):
 
 # Starts the API
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0")
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=443,
+        ssl_keyfile="./static/ssl/localhost.decrypted.key",
+        ssl_certfile="./static/ssl/localhost.crt"
+    )
 
 
 # https://pyjwt.readthedocs.io/en/latest/

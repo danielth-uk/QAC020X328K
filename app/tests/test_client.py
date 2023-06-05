@@ -1,6 +1,10 @@
 from fastapi.testclient import TestClient
-import httpx
-from app.main import app
+import os, sys, httpx
+
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+
+from main import app
 
 client = TestClient(app)
 

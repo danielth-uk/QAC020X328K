@@ -1,8 +1,13 @@
 from fastapi.testclient import TestClient
 
-from app.main import app
+import os, sys
 
-client = TestClient(app)
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+
+from app import main
+
+client = TestClient(main.app)
 
 # General Variables used throughout
 varHeaders = {"Content-Type": "application/json"}
