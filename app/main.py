@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import SecurityScopes, APIKeyHeader
 from fastapi.responses import JSONResponse
 
-from ApiModels import *
-from functionsMain import *
+from modules.ApiModels import *
+from modules.functionsMain import *
 
 from pathlib import Path
 BASE_PATH = Path(__file__).resolve().parent

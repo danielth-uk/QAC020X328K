@@ -38,25 +38,14 @@ Users can create, read and update their own tickets and comments, while admins c
 
 ## Starting Local Prod Env
 
-To get started running the whole setup with one command, you must have docker and docker-compose installed (docker now has a form of compose built in, to check run `docker compose --help`).
+To get started running the whole setup with one command, you must have docker and docker-compose installed (docker now has a form of compose built in, to check run `docker compose --help`). Then you can go to [https://localhost/](https://localhost/) to see the app.
 
 ```
-> docker-compose up
+> docker-compose up --build
 ```
+
 
 ## Dev
-
-All these commands must be run in the root directory. If running in development mode, you must alter the modules at the start.
-
-``` python
-# For production
-from ApiModels import *
-from functionsMain import *
-
-# For Dev
-from app.ApiModels import *
-from app.functionsMain import *
-```
 
 ### Installing dependencies
 
@@ -68,8 +57,10 @@ To install dependencies run the following command in the root directory (where r
 
 
 ### Powershell
+
+This must be run in the `app` directory
 ``` powershell
-> $env:ENV="DEV"; uvicorn app.main:app --reload
+> $PYTHONPATH=$PWD; $env:ENV="DEV"; uvicorn main:app  
 ```
 
 ## Testing
