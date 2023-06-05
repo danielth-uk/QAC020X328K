@@ -58,7 +58,8 @@ jobs:
       - name: Test 
         run: |
           pip install pytest
-          pytest
+          cd app
+          $PYTHONPATH=$PWD; python -m pytest
 
       - name: Lint
         run: |
