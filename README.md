@@ -11,8 +11,8 @@
 ## Requirements
 
 - Python3.7
-- nginx (for deployment)
-- mySQL server
+- MySQL server
+- Docker
 
 <br />
 
@@ -34,14 +34,38 @@ Users can create, read and update their own tickets and comments, while admins c
 
 <br />
 
-# Deployment
+# To Use 
 
-This application has been deployed to X [To be added]. Using Nginx to reverse proxy incoming requests to the python application. [Tutorial Used Here](https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/)
+## Starting Local Prod Env
 
+To get started running the whole setup with one command, you must have docker and docker-compose installed (docker now has a form of compose built in, to check run `docker compose --help`).
 
-# To use 
+```
+> docker-compose up
+```
 
-## Starting
+## Dev
+
+All these commands must be run in the root directory. If running in development mode, you must alter the modules at the start.
+
+``` python
+# For production
+from ApiModels import *
+from functionsMain import *
+
+# For Dev
+from app.ApiModels import *
+from app.functionsMain import *
+```
+
+### Installing dependencies
+
+To install dependencies run the following command in the root directory (where requirements.txt is)
+
+```powershell
+> pip install -r requirements.txt
+```
+
 
 ### Powershell
 ``` powershell
@@ -58,11 +82,13 @@ This application has been deployed to X [To be added]. Using Nginx to reverse pr
 > flake8
 ```
 
-# To use - Docker
+<br />
 
-Note you must have a `.local.env` file with the following ENV Params
+# Containerising it
 
-```
+Note you must have a `.local.env` file with the following ENV Params in the root directory
+
+```ENV
 ENV=DEV
 JWT_SECRET=
 DATABASE_DB=
@@ -70,6 +96,8 @@ DATABASE_USER=
 DATABASE_PASSWORD=
 DATABASE_HOST=
 ```
+
+*You must also change main.py to the production implementation noted [Here](#dev)*
 
 ``` powershell
 -- Building --

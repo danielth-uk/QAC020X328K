@@ -1,0 +1,41 @@
+version: '3.1'
+
+
+services:
+
+
+  # The Main Database Server
+  main-db:
+    build: https://github.com/danielth-uk/QAC020X328K-db.git
+    environment:
+      - MYSQL_ROOT_PASSWORD=rHKHXnbMjlENzGFsTMsdYWw
+      - MYSQL_DATABASE=qa_db_ticketing
+      - MYSQL_USER=api_user
+      - MYSQL_PASSWORD=lENzGFKHXnblENzGFKHXnb
+    volumes:
+      - mysql_storage:/var/lib/mysql
+    networks:
+      - mysql-connections
+
+  main-app:
+    build: .
+    environment:
+      - ENV=PROD
+      - DATABASE_DB=qa_db_ticketing
+      - DATABASE_USER=api_user
+      - DATABASE_PASSWORD=lENzGFKHXnblENzGFKHXnb
+      - DATABASE_HOST=main-db
+      - JWT_SECRET=09d28166b70f4caa5e094faa6ca2556c816cf63b88e8da9563b93f7099f6f3e7
+    networks:
+      - mysql-connections
+    ports:
+      - "80:80"
+      - "443:443"
+
+
+volumes:
+  mysql_storage:
+
+networks:
+  mysql-connections:
+    driver: bridge
