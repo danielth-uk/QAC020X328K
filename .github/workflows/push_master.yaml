@@ -70,4 +70,4 @@ jobs:
       - name: Lint
         run: |
           pip install flake8
-          flake8 . --count --show-source --exit-zero --max-complexity=10 --max-line-length=127 --statistics --ignore=w605
+          flake8 . --count --show-source --exit-zero --max-complexity=10 --max-line-length=127 --statistics --ignore=w605,E402
