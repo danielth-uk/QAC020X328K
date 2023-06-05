@@ -14,3 +14,8 @@ app/tests
 nginx
 compose
 ignore
+docker-compose.yaml
+README.md
+.github
+testing-requirements.txt
+.git
