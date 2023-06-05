@@ -64,6 +64,8 @@ jobs:
 
       - name: Test
         run: |
+          run pwd
+          ls -la
           pip install pytest
           cd /home/runner/work/QAC020X328K/QAC020X328K/app
           $PYTHONPATH=$PWD; python -m pytest
