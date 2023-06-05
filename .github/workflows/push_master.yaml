@@ -55,6 +55,10 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f testing-requirements.txt ]; then pip install -r testing-requirements.txt; fi
     
+      - name: List
+        run: |
+          ls -la
+
       - name: Test
         working-directory: ./app
         run: |
@@ -64,4 +68,4 @@ jobs:
       - name: Lint
         run: |
           pip install flake8
-          flake8 . --count --show-source --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 . --count --show-source --exit-zero --max-complexity=10 --max-line-length=127 --statistics --ignore=w605
