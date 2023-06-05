@@ -64,8 +64,10 @@ This must be run in the `app` directory
 ```
 
 ## Testing
-```
-> pytest
+
+This must be run in the `app` directory
+``` powershell
+> $PYTHONPATH=$PWD; python -m pytest
 ```
 
 ## Linting
