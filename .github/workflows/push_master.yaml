@@ -61,9 +61,9 @@ jobs:
           ls -la
 
       - name: Test
-        working-directory: ../app
         run: |
           pip install pytest
+          cd /home/runner/work/QAC020X328K/QAC020X328K/app
           $PYTHONPATH=$PWD; python -m pytest
 
       - name: Lint
