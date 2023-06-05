@@ -60,6 +60,7 @@ jobs:
           pwd
           ls -la
           cd ./app
+          ls -la
 
       - name: Test
         run: |
