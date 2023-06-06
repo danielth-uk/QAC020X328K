@@ -1,6 +1,12 @@
 
 # Software Engineering and Agile
 
+
+## Docker Image
+```
+docker pull ghcr.io/danielth-uk/qac020x328k:master
+```
+
 *Created By Daniel Thompson*
 
 [![Push Master](https://github.com/danielth-uk/QAC020X328K/actions/workflows/push_master.yaml/badge.svg?branch=master)](https://github.com/danielth-uk/QAC020X328K/actions/workflows/push_master.yaml)
@@ -118,3 +124,10 @@ General References
 * https://docs.pytest.org/en/7.1.x/
 * https://fastapi.tiangolo.com/tutorial/testing/
 * https://fastapi.tiangolo.com/tutorial/handling-errors/
+
+
+CI/CD References
+* https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
+* https://stackoverflow.com/questions/54310050/how-to-version-build-artifacts-using-github-actions
+* https://github.com/marketplace/actions/create-or-update-release
+* https://github.com/marketplace/actions/generate-version-tag

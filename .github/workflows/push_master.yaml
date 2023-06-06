@@ -15,7 +15,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -55,4 +55,4 @@ jobs:
           makeLatest: true
           name: ${{ steps.version.outputs.version }}
           tag: "release"
-        
+
