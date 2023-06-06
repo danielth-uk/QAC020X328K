@@ -40,17 +40,17 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Generate new tag version
+        id: version
+        uses: flynshue/version-action
+
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ github.run_number }}
-
-      - name: Generate new tag version
-        id: version
-        uses: flynshue/version-action
+          labels: ${{ steps.version.outputs.version }}
 
       - name: Create Release
         id: create_release
