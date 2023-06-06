@@ -1,13 +1,10 @@
-# https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
-# https://stackoverflow.com/questions/54310050/how-to-version-build-artifacts-using-github-actions
-
 name: Push Master
 on:
   push:
     branches: ['master']
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   REGISTRY: ghcr.io
@@ -38,10 +35,27 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Generate new tag version
+        id: version
+        uses: flynshue/version-action@v0.0.1
+
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ github.run_number }}
+          labels: ${{ steps.version.outputs.version }}
+
+      - name: Create Release
+        id: create_release
+        uses: joutvhu/create-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
