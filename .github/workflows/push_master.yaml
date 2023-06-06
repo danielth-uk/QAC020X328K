@@ -39,12 +39,18 @@ jobs:
         id: version
         uses: flynshue/version-action@v0.0.1
 
+      - name: Generate Lowercase Image Name
+        id: string
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ env.IMAGE_NAME }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{  lowercase(env.IMAGE_NAME) }}:${{ steps.version.outputs.version }}
+          tags: ${{ env.REGISTRY }}/${{  steps.string.outputs.lowercase }}:${{ steps.version.outputs.version }}
 
       - name: Create Release
         id: create_release
