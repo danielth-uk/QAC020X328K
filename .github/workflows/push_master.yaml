@@ -52,6 +52,11 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{  steps.string.outputs.lowercase }}:${{ steps.version.outputs.version }}
 
+      - name: "Generate changelog"
+        uses: heinrichreimer/github-changelog-generator-action@v2.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} 
+
       - name: Read the changelog
         id: changelog
         uses: 3liz/changelog-release@0.2.0
