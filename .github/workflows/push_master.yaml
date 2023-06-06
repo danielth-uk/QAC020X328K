@@ -59,4 +59,5 @@ jobs:
           bodyFile: "README.md"
           makeLatest: true
           name: ${{ steps.version.outputs.version }}
+          tag: ${{ steps.version.outputs.version }}
 
