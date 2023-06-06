@@ -126,3 +126,4 @@ CI/CD References
 * https://stackoverflow.com/questions/54310050/how-to-version-build-artifacts-using-github-actions
 * https://github.com/marketplace/actions/create-or-update-release
 * https://github.com/marketplace/actions/generate-version-tag
+* https://github.com/marketplace/actions/changelog-release
