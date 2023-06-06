@@ -1,4 +1,5 @@
 # https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
+# https://stackoverflow.com/questions/54310050/how-to-version-build-artifacts-using-github-actions
 
 name: Push Master
 on:
@@ -43,4 +44,4 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: ${{ github.run_number }}
