@@ -49,13 +49,10 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: joutvhu/create-release@v1.0.0
+        uses: ncipollo/release-action@v1.12.0
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: Release ${{ steps.version.outputs.version }}
-          generate_release_notes: true
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          bodyFile: "README.md"
+          makeLatest: true
+          name: ${{ steps.version.outputs.version }}
+          tag: "release"
+        
