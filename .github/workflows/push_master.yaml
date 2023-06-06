@@ -56,6 +56,11 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1.12.0
         with:
+          body: |
+            ## Docker Image
+            ```
+            docker pull ghcr.io/danielth-uk/qac020x328k:${{ steps.version.outputs.version }}
+            ```
           bodyFile: "README.md"
           makeLatest: true
           name: ${{ steps.version.outputs.version }}

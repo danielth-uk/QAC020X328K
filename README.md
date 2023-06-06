@@ -2,11 +2,6 @@
 # Software Engineering and Agile
 
 
-## Docker Image
-```
-docker pull ghcr.io/danielth-uk/qac020x328k:master
-```
-
 *Created By Daniel Thompson*
 
 [![Push Master](https://github.com/danielth-uk/QAC020X328K/actions/workflows/push_master.yaml/badge.svg?branch=master)](https://github.com/danielth-uk/QAC020X328K/actions/workflows/push_master.yaml)
