@@ -13,7 +13,7 @@ from modules.functionsMain import *
 from pathlib import Path
 BASE_PATH = Path(__file__).resolve().parent
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None)
 
 # Enabling CORS to allow frontend to send requests to the backend
 origins = [
