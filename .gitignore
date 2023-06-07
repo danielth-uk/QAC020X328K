@@ -11,3 +11,4 @@ my_env
 share
 .vscode
 ignore
+.coverage

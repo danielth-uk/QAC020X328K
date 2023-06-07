@@ -16,7 +16,7 @@ services:
       - mysql_storage:/var/lib/mysql
     networks:
       - mysql-connections
-
+  
   main-app:
     build: .
     environment:

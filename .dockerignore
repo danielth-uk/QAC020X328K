@@ -19,3 +19,4 @@ README.md
 .github
 testing-requirements.txt
 .git
+.coverage
