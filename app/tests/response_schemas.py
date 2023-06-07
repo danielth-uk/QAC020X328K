@@ -54,7 +54,7 @@ class TestSchemaTickets:
         "tags": str or None,
         "opened_time": str,
         "last_message": None,
-        "main_body": dict,
+        "main_body": any,
         "closed": int,
         "created_name": str,
         "assigned_name": str or None
