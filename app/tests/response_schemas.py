@@ -49,15 +49,15 @@ class TestSchemaTickets:
         "id": int,
         "subject": str,
         "created_by": str,
-        "assigned_contact": None or str,
+        "assigned_contact": str or None,
         "org": "test",
-        "tags": None or str,
+        "tags": str or None,
         "opened_time": str,
-        "last_message": None or str,
+        "last_message": str or None,
         "main_body": dict,
         "closed": int,
         "created_name": str,
-        "assigned_name": None or str
+        "assigned_name": str or None
     }
 
     ticketComment = {

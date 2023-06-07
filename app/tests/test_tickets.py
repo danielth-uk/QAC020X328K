@@ -169,7 +169,9 @@ def test_get_client_tickets_comment_not_int():
 def test_post_admin_new_comment_success():
     body = {
         "username": "test.admin",
-        "body": [],
+        "body": [{
+            "insert": "\n"
+        }],
         "org": "test",
         "ticket": "1"
     }
@@ -182,7 +184,9 @@ def test_post_admin_new_comment_success():
 def test_post_client_new_comment_success():
     body = {
         "username": "test.user",
-        "body": [],
+        "body": [{
+            "insert": "\n"
+        }],
         "org": "test",
         "ticket": "1"
     }
