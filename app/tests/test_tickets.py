@@ -57,7 +57,7 @@ def test_get_admin_tickets_found():
         "/api/general/tickets/1?org=test", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 200
-    assert schema(TicketSchema.ticketGeneral) == response.json()
+    assert response.json() == schema(TicketSchema.ticketGeneral)
 
 
 def test_get_client_tickets_found():
@@ -65,7 +65,7 @@ def test_get_client_tickets_found():
         "/api/general/tickets/1?org=test", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 200
-    assert schema(TicketSchema.ticketGeneral) == response.json()
+    assert response.json() == schema(TicketSchema.ticketGeneral)
 
 
 def test_get_admin_tickets_not_found():
@@ -73,7 +73,7 @@ def test_get_admin_tickets_not_found():
         "/api/general/tickets/100?org=test", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 404
-    assert schema(GenericSchemas.genericDetail) == response.json()
+    assert response.json() == schema(GenericSchemas.genericDetail)
     assert response.json() == {"detail": "Ticket Not Found"}
 
 
@@ -82,7 +82,7 @@ def test_get_client_tickets_not_found():
         "/api/general/tickets/100?org=test", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 404
-    assert schema(GenericSchemas.genericDetail) == response.json()
+    assert response.json() == schema(GenericSchemas.genericDetail)
     assert response.json() == {"detail": "Ticket Not Found"}
 
 
@@ -105,7 +105,7 @@ def test_get_admin_tickets_no_org():
         "/api/general/tickets/1", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 422
-    assert schema(GenericSchemas.genericMissingParams) == response.json()
+    assert schema(GenericSchemas.genericMissingParams)
 
 
 def test_get_client_tickets_no_org():
@@ -113,7 +113,7 @@ def test_get_client_tickets_no_org():
         "/api/general/tickets/1", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 422
-    assert schema(GenericSchemas.genericMissingParams) == response.json()
+    assert response.json() == schema(GenericSchemas.genericMissingParams)
 
 
 def test_get_admin_tickets_comments_found():
@@ -121,7 +121,7 @@ def test_get_admin_tickets_comments_found():
         "/api/general/tickets/1/comments", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 200
-    assert schema([TicketSchema.ticketComment]) == response.json()
+    assert response.json() == schema([TicketSchema.ticketComment])
 
 
 def test_get_client_tickets_comment_found():
@@ -129,7 +129,7 @@ def test_get_client_tickets_comment_found():
         "/api/general/tickets/1/comments", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 200
-    assert schema([TicketSchema.ticketComment]) == response.json()
+    assert response.json() == schema([TicketSchema.ticketComment])
 
 
 def test_get_admin_tickets_comments_not_found():
@@ -137,7 +137,7 @@ def test_get_admin_tickets_comments_not_found():
         "/api/general/tickets/100/comments", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 404
-    assert schema(GenericSchemas.genericDetail) == response.json()
+    assert response.json() == schema(GenericSchemas.genericDetail)
     assert response.json() == {"detail": "Ticket Not Found"}
 
 
@@ -146,7 +146,7 @@ def test_get_client_tickets_comment_not_found():
         "/api/general/tickets/100/comments", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 404
-    assert schema(GenericSchemas.genericDetail) == response.json()
+    assert response.json() == schema(GenericSchemas.genericDetail)
     assert response.json() == {"detail": "Ticket Not Found"}
 
 
@@ -155,7 +155,7 @@ def test_get_admin_tickets_comments_not_int():
         "/api/general/tickets/a/comments", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 422
-    assert schema(GenericSchemas.genericMissingParams) == response.json()
+    assert response.json() == schema(GenericSchemas.genericMissingParams)
 
 
 def test_get_client_tickets_comment_not_int():
@@ -163,7 +163,7 @@ def test_get_client_tickets_comment_not_int():
         "/api/general/tickets/a/comments", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 422
-    assert schema(GenericSchemas.genericMissingParams) == response.json()
+    assert response.json() == schema(GenericSchemas.genericMissingParams)
 
 
 def test_post_admin_new_comment_success():

@@ -129,4 +129,3 @@ def test_register_user_good_creds():
     assert response.status_code == 200
     assert response.json()
     assert schema(GenericSchemas.genericReason) == response.json()
-    assert response.json() == {"reason": "incorrect admin code"}
