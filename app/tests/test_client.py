@@ -44,4 +44,4 @@ def test_client_get_tickets():
     print(response.status_code)
     print(response.json())
     assert response.status_code == 200
-    assert response.json() == [] or response.json() == dict
+    assert response.json() == dict

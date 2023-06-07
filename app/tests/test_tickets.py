@@ -70,7 +70,7 @@ def test_get_client_tickets_found():
 
 def test_get_admin_tickets_not_found():
     response = client.get(
-        "/api/general/tickets/2?org=test", headers=varHeadersAdmin, cookies=varCookies
+        "/api/general/tickets/100?org=test", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 404
     assert schema(GenericSchemas.genericDetail) == response.json()
@@ -79,7 +79,7 @@ def test_get_admin_tickets_not_found():
 
 def test_get_client_tickets_not_found():
     response = client.get(
-        "/api/general/tickets/2?org=test", headers=varHeadersClient, cookies=varCookies
+        "/api/general/tickets/100?org=test", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 404
     assert schema(GenericSchemas.genericDetail) == response.json()
@@ -134,7 +134,7 @@ def test_get_client_tickets_comment_found():
 
 def test_get_admin_tickets_comments_not_found():
     response = client.get(
-        "/api/general/tickets/2/comments", headers=varHeadersAdmin, cookies=varCookies
+        "/api/general/tickets/100/comments", headers=varHeadersAdmin, cookies=varCookies
     )
     assert response.status_code == 404
     assert schema(GenericSchemas.genericDetail) == response.json()
@@ -143,7 +143,7 @@ def test_get_admin_tickets_comments_not_found():
 
 def test_get_client_tickets_comment_not_found():
     response = client.get(
-        "/api/general/tickets/2/comments", headers=varHeadersClient, cookies=varCookies
+        "/api/general/tickets/100/comments", headers=varHeadersClient, cookies=varCookies
     )
     assert response.status_code == 404
     assert schema(GenericSchemas.genericDetail) == response.json()
@@ -174,7 +174,7 @@ def test_post_admin_new_comment_success():
         "ticket": "1"
     }
     response = client.post(
-        "/api/general/comments", headers=varHeadersClient, cookies=varCookies, json=body
+        "/api/general/comments", headers=varHeadersAdmin, cookies=varCookies, json=body
     )
     assert response.status_code == 200
 

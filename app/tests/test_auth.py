@@ -115,7 +115,6 @@ def test_register_no_creds():
     assert response.status_code == 422
 
 
-@pytest.mark.skip(reason="Will always fail, need to remove this when commiting")
 def test_register_user_good_creds():
     response = test_register_main(
         {
