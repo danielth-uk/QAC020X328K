@@ -16,9 +16,7 @@ services:
       - mysql_storage:/var/lib/mysql
     networks:
       - mysql-connections
-    ports:
-      - "3306:3306"
-
+  
   main-app:
     build: .
     environment:
