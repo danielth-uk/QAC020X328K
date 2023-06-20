@@ -54,11 +54,10 @@ jobs:
 
       - name: "Generate changelog"
         id: changelog
-        uses: Bullrich/generate-release-changelog@2.0.0
+        uses: heinrichreimer/github-changelog-generator-action@v2.3
         with:
+          future-release: ${{ steps.version.outputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }} 
-        env:
-          REPO: https://github.com/danielth-uk/QAC020X328K 
 
       - name: Create Release
         id: create_release
