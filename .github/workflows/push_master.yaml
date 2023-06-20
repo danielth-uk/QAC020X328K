@@ -52,12 +52,12 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{  steps.string.outputs.lowercase }}:${{ steps.version.outputs.version }}
 
-      - name: "Generate changelog"
-        id: changelog
-        uses: heinrichreimer/github-changelog-generator-action@v2.3
-        with:
-          future-release: ${{ steps.version.outputs.version }}
-          token: ${{ secrets.GITHUB_TOKEN }} 
+      # - name: "Generate changelog"
+      #   id: changelog
+      #   uses: heinrichreimer/github-changelog-generator-action@v2.3
+      #   with:
+      #     future-release: ${{ steps.version.outputs.version }}
+      #     token: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Create Release
         id: create_release
@@ -69,11 +69,11 @@ jobs:
             docker pull ghcr.io/danielth-uk/qac020x328k:${{ steps.version.outputs.version }}
             ```
 
-            ## See Read Me for more information
+            ## Readme
 
             https://github.com/danielth-uk/QAC020X328K/blob/master/README.md
 
-            ${{ steps.changelog.outputs.changelog }}
+            ## Changelog (To Add)
 
           makeLatest: true
           name: ${{ steps.version.outputs.version }}
