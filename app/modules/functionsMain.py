@@ -61,7 +61,7 @@ def ticketBodyNormalize(data: dict, direction: bool) -> dict:
 
 
 # A function used to open, retrieve and close database connection in once place
-def databaseFetch(query: str) -> list:
+def databaseFetch(query: str, values: list = []) -> list:
     """
     Retrieves data from the database.
     Arguments:
@@ -77,7 +77,10 @@ def databaseFetch(query: str) -> list:
         database=databaseDb,
     )
     cursor = databaseConnection.cursor(dictionary=True)
-    cursor.execute(query)
+    if (len(values) > 0):
+        cursor.execute(query, values)
+    else:
+        cursor.execute(query)
     result = cursor.fetchall()
     cursor.close()
     return result
@@ -100,12 +103,11 @@ def databaseExecute(queryStatement: str, values: list = []) -> None:
         database=databaseDb,
     )
     cursor = databaseConnection.cursor()
-
     try:
         if values == []:
             cursor.execute(queryStatement)
         else:
-            cursor.execute(queryStatement, [i.encode('ascii', 'xmlcharrefreplace') for i in values])
+            cursor.execute(queryStatement, values)
             databaseConnection.commit()
     except:
         raise HTTPException(status_code=500, detail="Error with sql query")
@@ -139,8 +141,8 @@ def checkAuthentication(username: str, password: str) -> list:
     if username == "" or password == "":
         raise HTTPException(status_code=422, detail="Unprocessable Entity")
     result = databaseFetch(
-        "SELECT * FROM tbl_users WHERE userid = '%s' AND password = '%s';"
-        % (username, passwordToHashedPassword(password))
+        "SELECT * FROM tbl_users WHERE userid = %s AND password = %s;",
+        [username, passwordToHashedPassword(password)]
     )
     # return result
     if len(result) == 0 or len(result) > 1:
@@ -218,7 +220,7 @@ def registerUser(
             raise UnicornException(status_code=403, reason="incorrect admin code")
 
     exists = databaseFetch(
-        "SELECT username FROM tbl_users WHERE userid = '%s' " % (org + "." + username)
+        "SELECT username FROM tbl_users WHERE userid = %s", [(org + "." + username)]
     )
     if len(exists) > 0:
         raise UnicornException(
@@ -285,12 +287,11 @@ def checkPasswordRequirements(password):
 def adminGetUserTypes(type: str, org: str) -> list:
     if org != "":
         userResults = databaseFetch(
-            "SELECT userid, org, username,name FROM tbl_users WHERE admin = %s AND org = '%s'"
-            % (type, org)
+            "SELECT userid, org, username,name FROM tbl_users WHERE admin = %s AND org = %s", [type, org]
         )
     else:
         userResults = databaseFetch(
-            "SELECT userid, org, username,name FROM tbl_users WHERE admin = %s" % type
+            "SELECT userid, org, username,name FROM tbl_users WHERE admin = %s", [type]
         )
     return userResults
 
@@ -301,8 +302,7 @@ def adminGetOrgs() -> list:
 
 def createUser(userDetails) -> HTTPException:
     exists = databaseFetch(
-        "SELECT username FROM tbl_users WHERE userid = '%s' "
-        % (userDetails.org + "." + userDetails.username)
+        "SELECT username FROM tbl_users WHERE userid = %s", [userDetails.org + "." + userDetails.username]
     )
     if len(exists) > 0:
         raise HTTPException(
@@ -338,8 +338,7 @@ def deleteUser(userId: str) -> None:
 
 def updateUser(details: str, userId: str) -> None:
     exists = databaseFetch(
-        "SELECT username FROM tbl_users WHERE userid = '%s' "
-        % (details.org + "." + details.username)
+        "SELECT username FROM tbl_users WHERE userid = %s ", [details.org + "." + details.username]
     )
     if len(exists) > 0:
         raise HTTPException(
@@ -472,13 +471,11 @@ def clientGetTickets(org: bool, orgName: str = "", username: str = "") -> dict:
     try:
         if org:
             return databaseFetch(
-                "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.org =  '%s' "
-                % orgName
+                "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.org = %s", [orgName]
             )
         else:
             return databaseFetch(
-                "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.created_by =  '%s'"
-                % username
+                "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.created_by =  %s", [username]
             )
 
     except:
@@ -501,13 +498,13 @@ def clientCreateTicket(username, org, subject, body) -> HTTPException:
 def ticketOpenTicket(org: str, ticketId: int) -> dict:
     if org == "qa":
         data = databaseFetch(
-            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE  t.id = '%s'"
-            % (ticketId)
+            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE  t.id = %s"
+            , [ticketId]
         )
     else:
         data = databaseFetch(
-            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.org = '%s' AND t.id = '%s'"
-            % (org, ticketId)
+            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.org = %s AND t.id = %s"
+            , [org, ticketId]
         )
 
     if len(data) == 1:
@@ -523,8 +520,8 @@ def ticketGetTicketComments(ticketId):
     data = databaseFetch("SELECT id from tbl_tickets WHERE id = '%s'" % ticketId)
     if len(data) == 1:
         data = databaseFetch(
-            "SELECT t.id, t.comment_body, t.posted_by, t.posted, t.updated, u1.name AS posted_name FROM tbl_ticket_comments AS t INNER JOIN tbl_users AS u1 ON t.posted_by = u1.userid WHERE ticket_id = '%s'"
-            % ticketId
+            "SELECT t.id, t.comment_body, t.posted_by, t.posted, t.updated, u1.name AS posted_name FROM tbl_ticket_comments AS t INNER JOIN tbl_users AS u1 ON t.posted_by = u1.userid WHERE ticket_id = %s"
+            , [ticketId]
         )
         for comment in data:
             comment["comment_body"] = ticketBodyNormalize(
