@@ -1,66 +1,81 @@
-
-
 name: Push Master
-
-env:
-  ENV: CI
-  DATABASE_HOST: 127.0.0.1
-  DATABASE_PASSWORD: testing_password
-  DATABASE_DB: qa_db_ticketing
-  DATABASE_USER: root
-  JWT_SECRET: 4faa6ca2556c816cf63b88e84faa6ca2556c816cf63b88e89f6f3e7
-
-on: push
+on:
+  push:
+    branches: ['master']
 
 permissions:
-  contents: read
+  contents: write
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+  
 jobs:
-
-  CI:
+  build-and-push-image:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: testing_password
-          MYSQL_DATABASE: qa_db_ticketing
-
-        options: >-
-          --health-cmd "mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    permissions:
+      contents: write
+      packages: write
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Check out repository code
-        uses: actions/setup-python@v3
-        
-      - name: Imports data to database
-        run: mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Test Database Data
-        run: |
-          mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing -e 'SHOW TABLES'
-          mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_users'
-          mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_tickets'
-          mysql --user=root --password=testing_password -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_ticket_comments'
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f testing-requirements.txt ]; then pip install -r testing-requirements.txt; fi
-    
-      - name: Test 
-        run: |
-          pip install pytest
-          pytest
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Lint
-        run: |
-          pip install flake8
-          flake8 . --count --show-source --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Generate new tag version
+        id: version
+        uses: flynshue/version-action@v0.0.1
+
+      - name: Generate Lowercase Image Name
+        id: string
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{  steps.string.outputs.lowercase }}:${{ steps.version.outputs.version }}
+
+      - name: "Generate changelog"
+        id: changelog
+        uses: heinrichreimer/github-changelog-generator-action@v2.3
+        with:
+          future-release: ${{ steps.version.outputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          body: |
+            ## Docker Image
+            ```
+            docker pull ghcr.io/danielth-uk/qac020x328k:${{ steps.version.outputs.version }}
+            ```
+
+            ## See Read Me for more information
+
+            https://github.com/danielth-uk/QAC020X328K/blob/master/README.md
+
+            ${{ steps.changelog.outputs.changelog }}
+
+          makeLatest: true
+          name: ${{ steps.version.outputs.version }}
+          tag: ${{ steps.version.outputs.version }}
+
