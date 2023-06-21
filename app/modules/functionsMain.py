@@ -105,7 +105,7 @@ def databaseExecute(queryStatement: str, values: list = []) -> None:
         if values == []:
             cursor.execute(queryStatement)
         else:
-            cursor.execute(queryStatement, values)
+            cursor.execute(queryStatement, [i.encode('ascii', 'xmlcharrefreplace') for i in values])
             databaseConnection.commit()
     except:
         raise HTTPException(status_code=500, detail="Error with sql query")
