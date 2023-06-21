@@ -11,7 +11,7 @@ client = TestClient(main.app)
 
 def test_get_jwt_admin():
     response = client.post(
-        "/api/auth", json={"username":  "test.admin", "password":  "cGFzc3dvcmQ="}
+        "/api/auth", json={"username": "test.admin", "password": "cGFzc3dvcmQ="}
     )
     data = response.json()
     assert response.status_code == 200
@@ -21,7 +21,7 @@ def test_get_jwt_admin():
 
 def test_get_jwt_client():
     response = client.post(
-        "/api/auth", json={"username":  "test.user", "password":  "cGFzc3dvcmQ="}
+        "/api/auth", json={"username": "test.user", "password": "cGFzc3dvcmQ="}
     )
     data = response.json()
     assert response.status_code == 200
@@ -42,6 +42,7 @@ varHeadersClient = {
     "Content-Type": "application/json",
     "Authorization": test_get_jwt_client(),
 }
+
 
 def test_admin_run_query_api_admin_danger_post_successful_response():
     response = client.post("/api/admin/danger", headers=varHeadersAdmin, json={"query": "string"})
@@ -162,6 +163,7 @@ def test_no_authadmin_update_assigned_api_admin_updateAdmin__ticketId__put_succe
     assert response.json()
     assert response.status_code == 403
 
+
 def test_admin_update_close_ticket_api_admin_closeTicket__ticketId__put_successful_response():
     response = client.put("/api/admin/closeTicket/1", headers=varHeadersAdmin)
     assert response.json()
@@ -235,7 +237,7 @@ def test_no_authget_client_tickets_api_client_tickets_get_validation_error():
 
 
 def test_no_authcreate_client_ticket_api_client_tickets_post_successful_response():
-    response = client.post("/api/client/tickets", json={"username": "string", "org": "string", "subject": "string", "body":{}})
+    response = client.post("/api/client/tickets", json={"username": "string", "org": "string", "subject": "string", "body": {}})
     assert response.json()
     assert response.status_code == 403
 
@@ -277,25 +279,25 @@ def test_no_authget_ticket_comments_api_general_tickets__ticketId__comments_get_
 
 
 def test_no_authcreate_ticket_comment_api_general_comments_post_successful_response():
-    response = client.post("/api/general/comments", json={"username": "string", "body":{},"org": "string", "ticket": "1"})
+    response = client.post("/api/general/comments", json={"username": "string", "body": {}, "org": "string", "ticket": "1"})
     assert response.json()
     assert response.status_code == 403
 
 
 def test_client_create_ticket_comment_api_general_comments_post_validation_error():
-    response = client.post("/api/general/comments", headers=varHeadersClient, json={"body":{},"org": "string", "ticket": "1"})   
+    response = client.post("/api/general/comments", headers=varHeadersClient, json={"body": {}, "org": "string", "ticket": "1"})
     assert response.json()
     assert response.status_code == 422
 
 
 def test_admin_create_ticket_comment_api_general_comments_post_validation_error():
-    response = client.post("/api/general/comments", headers=varHeadersAdmin, json={"body":{},"org": "string", "ticket": "1"})    
+    response = client.post("/api/general/comments", headers=varHeadersAdmin, json={"body": {}, "org": "string", "ticket": "1"})
     assert response.json()
     assert response.status_code == 422
 
 
 def test_no_authupdate_ticket_comment_api_general_comments__commentId__put_validation_error():
-    response = client.put("/api/general/comments/1", json={"body":{},"commentId": "string"})
+    response = client.put("/api/general/comments/1", json={"body": {}, "commentId": "string"})
     assert response.json()
     assert response.status_code == 403
 

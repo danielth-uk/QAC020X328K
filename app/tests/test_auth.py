@@ -1,4 +1,4 @@
-import os, sys, pytest
+import os, sys
 from fastapi.testclient import TestClient
 from pytest_schema import schema
 from response_schemas import TestSchemasAuth, TestSchmasGeneric

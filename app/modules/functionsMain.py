@@ -428,11 +428,11 @@ def adminUpdateTags(id, tags):
         raise HTTPException(status_code=500, detail="Cannot update Tags")
 
 
-## Reluctantly adding this feature
+# Reluctantly adding this feature
 def adminRunCustomQuery(query) -> HTTPException:
     try:
         if query.query == "RESET":
-            ## TO BUILD
+            # TODO - BUILD
             return HTTPException(
                 status_code=204, detail="Database Reset", headers={"status_code": 204}
             )
@@ -498,13 +498,11 @@ def clientCreateTicket(username, org, subject, body) -> HTTPException:
 def ticketOpenTicket(org: str, ticketId: int) -> dict:
     if org == "qa":
         data = databaseFetch(
-            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE  t.id = %s"
-            , [ticketId]
+            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE  t.id = %s", [ticketId]
         )
     else:
         data = databaseFetch(
-            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.org = %s AND t.id = %s"
-            , [org, ticketId]
+            "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.org = %s AND t.id = %s", [org, ticketId]
         )
 
     if len(data) == 1:
@@ -520,8 +518,7 @@ def ticketGetTicketComments(ticketId):
     data = databaseFetch("SELECT id from tbl_tickets WHERE id = '%s'" % ticketId)
     if len(data) == 1:
         data = databaseFetch(
-            "SELECT t.id, t.comment_body, t.posted_by, t.posted, t.updated, u1.name AS posted_name FROM tbl_ticket_comments AS t INNER JOIN tbl_users AS u1 ON t.posted_by = u1.userid WHERE ticket_id = %s"
-            , [ticketId]
+            "SELECT t.id, t.comment_body, t.posted_by, t.posted, t.updated, u1.name AS posted_name FROM tbl_ticket_comments AS t INNER JOIN tbl_users AS u1 ON t.posted_by = u1.userid WHERE ticket_id = %s", [ticketId]
         )
         for comment in data:
             comment["comment_body"] = ticketBodyNormalize(
