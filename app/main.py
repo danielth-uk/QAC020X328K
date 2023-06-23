@@ -7,6 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import SecurityScopes, APIKeyHeader
 from fastapi.responses import JSONResponse
 
+from Secweb import SecWeb
+from Secweb.XFrameOptions import XFrame
+from Secweb.XContentTypeOptions import XContentTypeOptions
+
 from modules.ApiModels import *
 from modules.functionsMain import *
 
@@ -14,6 +18,11 @@ from pathlib import Path
 BASE_PATH = Path(__file__).resolve().parent
 
 app = FastAPI(docs_url=None, redoc_url=None)
+
+# Taken from secweb docs  - https://github.com/tmotagam/Secweb
+SecWeb(app=app)
+app.add_middleware(XFrame, Option={'X-Frame-Options': 'DENY'})
+app.add_middleware(XContentTypeOptions)
 
 # Enabling CORS to allow frontend to send requests to the backend
 origins = [
