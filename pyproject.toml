@@ -14,7 +14,7 @@ Jinja2 = "3.1.2"
 gunicorn = "20.1.0"
 pyjwt = "2.7.0"
 mysql-connector-python = "8.0.33"
-Secweb = "1.7.2
+Secweb = "1.7.2"
 
 [tool.flake8]
 extend-ignore = """
