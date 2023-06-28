@@ -25,7 +25,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.CI_DB_PASSWORD}}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}
           MYSQL_DATABASE: qa_db_ticketing
 
         options: >-
@@ -40,14 +40,14 @@ jobs:
         uses: actions/setup-python@v3
         
       - name: Imports data to database
-        run: mysql --user=root --password=${{ secrets.CI_DB_PASSWORD}} -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
+        run: mysql --user=root --password=${{ secrets.CI_DB_PASSWORD }} -h 127.0.0.1 qa_db_ticketing < ./app/tests/_test_database.sql
 
       - name: Test Database Data
         run: |
-          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD}} -h 127.0.0.1 qa_db_ticketing -e 'SHOW TABLES'
-          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD}} -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_users'
-          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD}} -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_tickets'
-          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD}} -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_ticket_comments'
+          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD }} -h 127.0.0.1 qa_db_ticketing -e 'SHOW TABLES'
+          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD }} -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_users'
+          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD }} -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_tickets'
+          mysql --user=root --password=${{ secrets.CI_DB_PASSWORD }} -h 127.0.0.1 qa_db_ticketing -e 'SELECT * FROM tbl_ticket_comments'
 
       - name: Install dependencies
         run: |
