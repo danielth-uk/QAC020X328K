@@ -67,7 +67,7 @@ This must be run in the `app` directory
 ## Testing
 
 ``` powershell
-> $PYTHONPATH=$PWD; python -m pytest
+> $env:ENV="DEV"; $PYTHONPATH=$PWD; python -m pytest
 ```
 
 ## Linting
