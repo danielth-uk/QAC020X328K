@@ -109,7 +109,8 @@ def databaseExecute(queryStatement: str, values: list = []) -> None:
         else:
             cursor.execute(queryStatement, values)
             databaseConnection.commit()
-    except:
+    except mysql.connector.Error as e:
+        print('SQL Exception: ' + e)
         raise HTTPException(status_code=500, detail="Error with sql query")
 
     cursor.close()
@@ -144,7 +145,6 @@ def checkAuthentication(username: str, password: str) -> list:
         "SELECT * FROM tbl_users WHERE userid = %s AND password = %s;",
         [username, passwordToHashedPassword(password)]
     )
-    # return result
     if len(result) == 0 or len(result) > 1:
         raise HTTPException(status_code=403, detail="Unauthenticated")
     else:
@@ -404,7 +404,8 @@ def adminDeleteComment(id):
         return HTTPException(
             status_code=201, detail="Comment Deleted", headers={"success": True}
         )
-    except:
+    except Exception as e:
+        print('Exception: ' + e)
         raise HTTPException(status_code=500, detail="Cannot Delete Comment")
 
 
@@ -414,7 +415,8 @@ def adminCloseTicket(id):
         return HTTPException(
             status_code=201, detail="Ticket Updated", headers={"success": True}
         )
-    except:
+    except Exception as e:
+        print('Exception: ' + e)
         raise HTTPException(status_code=500, detail="Cannot close ticket")
 
 
@@ -424,7 +426,8 @@ def adminUpdateTags(id, tags):
         return HTTPException(
             status_code=201, detail="tags Updated", headers={"success": True}
         )
-    except:
+    except Exception as e:
+        print('Exception: ' + e)
         raise HTTPException(status_code=500, detail="Cannot update Tags")
 
 
@@ -478,7 +481,8 @@ def clientGetTickets(org: bool, orgName: str = "", username: str = "") -> dict:
                 "SELECT t.*, u1.name AS created_name, u2.name AS assigned_name FROM tbl_tickets AS t INNER JOIN tbl_users AS u1 ON t.created_by = u1.userid LEFT JOIN tbl_users AS u2 ON t.assigned_contact = u2.userid WHERE t.created_by =  %s", [username]
             )
 
-    except:
+    except Exception as e:
+        print('Exception: ' + e)
         raise HTTPException(status_code=403, detail="Missing request cookies")
 
 
